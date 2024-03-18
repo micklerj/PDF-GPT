@@ -1,7 +1,7 @@
 require("dotenv").config;
 const express = require('express');
 const app = express();
-const PORT = process.env.port || 3000; //backend will run on local port 3000
+const PORT = process.env.port || 3500; //backend will run on local port 3000
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConfig')
 
