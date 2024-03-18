@@ -1,13 +1,22 @@
-const Conversation = require("../model/tweet");
+const Conversation = require("../model/conversation");
 
-const fetchConversation = async(req, res) => {
+const fetchConversation = async (req, res) => {
   try {
-    const conversations = await Conversation.find({});
-    res.status((200)).json(conversations);
+    const convID = req.query.convID;
+    if (!convID) {
+      return res.status(400).json({ message: 'Conversation ID is required' });
+    }
+    const conversation = await Conversation.findOne({ convID });
+    if (!conversation) {
+      return res.status(404).json({ message: 'Conversation not found' });
+    }
+    res.status(200).json(conversation);
   } catch (err) {
     console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
-}
+};
+
 
 const newConversation = async(req, res) => {
   try {
@@ -16,6 +25,11 @@ const newConversation = async(req, res) => {
     if(!convID || !qaSequence) {
       return res.status(400);
     }
+    const existingConversation = await Conversation.findOne({ convID });
+    if (existingConversation) {
+      return res.status(409).json({ message: 'A conversation with this ID already exists' });
+    }
+
     const newConversation = new Conversation ({ convID, qaSequence});
     await newConversation.save();
     res.status(201).json(newConversation);
