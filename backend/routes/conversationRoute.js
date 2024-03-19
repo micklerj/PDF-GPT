@@ -6,4 +6,6 @@ router.get('/getConversation', conversationController.fetchConversation);
 
 router.post('/createConversation', conversationController.newConversation);
 
+router.put('/addQA/:convID', conversationController.addQA);
+
 module.exports = router;

@@ -38,4 +38,26 @@ const newConversation = async(req, res) => {
   }
 }
 
-module.exports = { fetchConversation, newConversation }
+const addQA = async(req, res) => {
+  try {
+    const { convID } = req.params;
+    const { question, answer } = req.body;
+  
+    if (!convID || !question || !answer) {
+      return res.status(400).json({ message: 'Missing required fields.'});
+    }
+    const conversation = await Conversation.findOne({ convID });
+    
+    if(!conversation) {
+      return res.status(404).json({ message: 'Conversation not found.'});
+    }
+    conversation.qaSequence.push({ question, answer });
+
+    await conversation.save();
+    res.status(200).json(conversation);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+module.exports = { fetchConversation, newConversation, addQA }
