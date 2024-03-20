@@ -6,8 +6,7 @@ const PORT = process.env.port || 3500; //backend will run on local port 3500
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConfig')
 
-const {convo, clearHistory, printHistory} = require('./conversation');
-const {askQuestion, uploadPdf} = require('./AskQuestion');
+const {vectorizePDF, convo, convo2, clearHistory, printHistory} = require('./conversation');
 
 
 connectDB();
@@ -25,17 +24,17 @@ const chatHistory = mongoose.connection.collection('chat-history');
 
 
 
-const user_input = "who is killed in \“DEATH AND OTHER DETAILS\"?";
+const user_input = "who is killed in \“DEATH AND OTHER DETAILS\"? whats my name";
 pdfname = "murder_mystery_show";
 
-async function run() {
-  await uploadPdf(pdfname);
-  askQuestion(user_input, pdfname);
-}
+const sessionID = "65f46cc9c537afc17dbef3d0";
 
-run()
+//vectorizePDF(pdfname);
 
-//const sessionID = "65f46bbf9b67688f308da0e8";
+//convo(chatHistory, sessionID, user_input);
+
+convo2(pdfname, user_input);
+
 
 // clearHistory(chatHistory, sessionID);
 // printHistory(chatHistory, sessionID);

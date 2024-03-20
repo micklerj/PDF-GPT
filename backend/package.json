@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@langchain/community": "^0.0.35",
+    "@langchain/core": "^0.1.48",
     "@langchain/mongodb": "^0.0.1",
     "@langchain/openai": "^0.0.18",
     "dotenv": "^16.4.5",
