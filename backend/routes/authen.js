@@ -14,9 +14,9 @@ router.post('/register', async (req, res) => {
             password: hashword
         });
         await user.save();
-        res.status(201).send('Registration successful');
+        res.status(201).json({ message: 'Registration successful' });
     } catch (error) {
-        res.status(400).send('Registration failed');
+        res.status(500).json({ error: 'Registration failed' });
     }
 });
 
@@ -28,18 +28,18 @@ router.post('/login', async (req, res) => {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
         if (!user) {
-            return res.status(404).send('User not found');
+            return res.status(404).json({ error: 'Authentication failed' });
         }
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
-            return res.status(400).send('Invalid credentials');
+            return res.status(404).json({ error: 'Authentication failed' });
         }
         const token = jwt.sign({ username: user.username }, 'secretkey', {
             expiresIn: '12h'
         });
         res.status(200).json({ token });
     } catch (error) {
-        res.status(400).send('Login failed');
+        res.status(400).json({ error: 'Login failed' });
     }
 });
 
