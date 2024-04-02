@@ -6,7 +6,8 @@ const PORT = process.env.port || 3500; //backend will run on local port 3500
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConfig')
 
-const {vectorizePDF, convo, convo2, clearHistory, printHistory} = require('./conversation');
+const {vectorizePDF, convo} = require('./openAIInterface');
+const readline = require('readline');
 
 
 connectDB();
@@ -24,17 +25,18 @@ const chatHistory = mongoose.connection.collection('chat-history');
 
 
 
-const user_input = "who is killed in \“DEATH AND OTHER DETAILS\"? whats my name";
-pdfname = "murder_mystery_show";
 
-const sessionID = "65f46cc9c537afc17dbef3d0";
+const pdfname = "PDFs/" + "murder_mystery_show";
+
 
 //vectorizePDF(pdfname);
 
-//convo(chatHistory, sessionID, user_input);
-
-convo2(pdfname, user_input);
-
-
-// clearHistory(chatHistory, sessionID);
-// printHistory(chatHistory, sessionID);
+// sample conversation in the terminal:
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+rl.on('line', async (input) => {
+  await convo.askQuestion(pdfname, input);
+  console.log("------------------------");
+});
