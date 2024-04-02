@@ -6,9 +6,6 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/dbConfig')
 
 
-//for login authentication
-const authenticate = require('./routes/authen');
-const protectedRoute = require('./routes/proroute');
 
 const {vectorizePDF, convo} = require('./openAIInterface');
 const readline = require('readline');
@@ -18,9 +15,6 @@ connectDB();
 
 app.use(express.json());
 
-app.use('/auth', authenticate);
-app.use('/protected', protectedRoute);
-
 app.use("/api", require("./routes/conversationRoute"))
 
 mongoose.connection.once('open', () => {
@@ -28,7 +22,7 @@ mongoose.connection.once('open', () => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 })
 
-const chatHistory = mongoose.connection.collection('chat-history');
+//const chatHistory = mongoose.connection.collection('chat-history');
 
 
 
@@ -44,6 +38,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 rl.on('line', async (input) => {
+  console.log("AI response:");
   await convo.askQuestion(pdfname, input);
-  console.log("------------------------");
+  console.log("---------------------------------");
 });
