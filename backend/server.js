@@ -7,7 +7,7 @@ const connectDB = require('./config/dbConfig')
 
 
 
-const {vectorizePDF, convo} = require('./openAIInterface');
+const {vectorizePDF, createConvo, convo} = require('./openAIInterface');
 const readline = require('readline');
 
 
@@ -27,18 +27,31 @@ mongoose.connection.once('open', () => {
 
 
 
-const pdfname = "PDFs/" + "murder_mystery_show";
+const pdfName = "murder_mystery_show";
+const pdfPath = "PDFs/" + pdfName;
+//vectorizePDF(pdfPath);
 
 
-//vectorizePDF(pdfname);
+// defailt id for testing
+let id = '123';
 
 // sample conversation in the terminal:
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
+
 rl.on('line', async (input) => {
-  console.log("AI response:");
-  await convo.askQuestion(pdfname, input);
+  // create new conversation in the database and use its id
+  if (input == 'new') {
+    id = await createConvo();
+    console.log(id);
+  }
+  // chat with the conversation cooresponding to previous id
+  else {
+    console.log("AI response:");
+    await convo.askQuestion(id, pdfPath, input);
+  }
   console.log("---------------------------------");
+  
 });

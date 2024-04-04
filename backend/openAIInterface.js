@@ -13,10 +13,12 @@ const {createRetrievalChain} = require('langchain/chains/retrieval');
 const {createHistoryAwareRetriever} = require('langchain/chains/history_aware_retriever');
 const {MessagesPlaceholder} = require('@langchain/core/prompts');
 
+const axios = require('axios');
+
 // vectorize the pdf file into a local vector store
-const vectorizePDF = async (pdfname) => {
-  const pdfPath = `./${pdfname}.pdf`;
-  const VECTOR_STORE_PATH = `./${pdfname}.index`;
+const vectorizePDF = async (pdfPath) => {
+  const fullPdfPath = `./${pdfPath}.pdf`;
+  const VECTOR_STORE_PATH = `./${pdfPath}.index`;
 
   let vectorStore;
   if (fs.existsSync(VECTOR_STORE_PATH)) {
@@ -28,7 +30,7 @@ const vectorizePDF = async (pdfname) => {
     console.log('Creating vector store...');
 
     //const text = fs.readFileSync("murder_mystery_show.txt", "utf8");    // for .txt files
-    const dataBuffer = fs.readFileSync(pdfPath);
+    const dataBuffer = fs.readFileSync(fullPdfPath);
     const data = await pdf(dataBuffer);
     const text = data.text;
 
@@ -51,16 +53,32 @@ const genSessionID = async () => {
   return sessionId;
 }
 
+// generate a new sessionId string
+const createConvo = async () => {
+  const id = await genSessionID();
+  const postData = {
+    "convID": id,
+    "qaSequence": []
+  };
+  
+  axios.post('http://localhost:3500/api/createConversation', postData)
+    .catch(error => {
+      console.error('Error:', error);
+    });
+
+  return id;
+}
+
 
 const convo = {
   chatHistory: [],
 
   // pass in user input to chat bot
-  askQuestion: async function(pdfname, user_input) {
+  askQuestion: async function(id, pdfPath, user_input) {
     const model = new ChatOpenAI({});
 
     // vector store retriever
-    const VECTOR_STORE_PATH = `./${pdfname}.index`;
+    const VECTOR_STORE_PATH = `./${pdfPath}.index`;
     vectorStore = await HNSWLib.load(VECTOR_STORE_PATH, new OpenAIEmbeddings());
     const vectorStoreRetriever = vectorStore.asRetriever();
 
@@ -113,9 +131,21 @@ const convo = {
     // add entries to chat history
     this.chatHistory.push(new HumanMessage(user_input));
     this.chatHistory.push(new AIMessage(response.answer));
+
+    // add entries to database
+    const putData = {
+      "question": user_input,
+      "answer": response.answer
+    };
+    axios.put('http://localhost:3500/api/addQA/' + id, putData)
+      .catch(error => {
+        console.error('Error:', error);
+      }); 
+
   }
 }
 
 
 
-module.exports = {vectorizePDF, genSessionID, convo};
+
+module.exports = {vectorizePDF, createConvo, convo};
