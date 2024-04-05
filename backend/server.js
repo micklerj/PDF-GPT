@@ -33,20 +33,28 @@ const pdfPath = "PDFs/" + pdfName;
 
 
 // defailt id for testing
-let id = '123';
+let id = '6610081b9f04d21c94c08a47';
+
+
 
 // sample conversation in the terminal:
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
-
 rl.on('line', async (input) => {
+
   // create new conversation in the database and use its id
   if (input == 'new') {
     id = await createConvo();
     console.log(id);
   }
+
+  // update local chat history
+  else if (input == 'update') {
+    await convo.updateHistory(id);
+  }
+
   // chat with the conversation cooresponding to previous id
   else {
     console.log("AI response:");

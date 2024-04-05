@@ -73,6 +73,30 @@ const createConvo = async () => {
 const convo = {
   chatHistory: [],
 
+  // upon switching to a new chat, update local chatHistory with chat history from mongoDB
+  updateHistory: async function(id) {
+    axios.get('http://localhost:3500/api/getConversation/?convID=' + id)
+    .then(response => {
+
+      // clear local chatHistory
+      this.chatHistory = [];
+
+      // Access the chat history from the response data
+      const QAs = response.data.qaSequence;
+      QAs.forEach(document => {
+        const question = document.question;
+        const answer = document.answer;
+
+        // add entries to chat history
+        this.chatHistory.push(new HumanMessage(question));
+        this.chatHistory.push(new AIMessage(answer));
+      });
+    })
+      .catch(error => {
+        console.error('Error:', error);
+      }); 
+  },
+
   // pass in user input to chat bot
   askQuestion: async function(id, pdfPath, user_input) {
     const model = new ChatOpenAI({});
