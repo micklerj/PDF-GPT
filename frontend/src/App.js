@@ -48,18 +48,14 @@ function App() {
 export default App;
 
 /*
-<header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+Things you need to add:
+- Some kind of upload pdf button
+- Some kind of message saying the pdf was uploaded and processed correctly
+
+- Integration with the database to store chat histories
+- Integration with the actual backend and API to have the app actually functioning
+
+- An initial login screen integrated with the login and authentication stuff Nick has been doing
+- Some sort of button for settings and the like
+- The actual settings page that the settings button corresponds to
 */
