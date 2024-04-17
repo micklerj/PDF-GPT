@@ -53,11 +53,12 @@ const genSessionID = async () => {
   return sessionId;
 }
 
-// generate a new sessionId string
-const createConvo = async () => {
+// generate a new conversation, return the sessionId
+const createConvo = async (pdfName) => {
   const id = await genSessionID();
   const postData = {
     "convID": id,
+    "pdfName": pdfName,
     "qaSequence": []
   };
   
@@ -150,7 +151,6 @@ const convo = {
       chat_history: this.chatHistory,
       input: user_input,
     });
-    console.log(response.answer);
 
     // add entries to chat history
     this.chatHistory.push(new HumanMessage(user_input));
@@ -165,6 +165,8 @@ const convo = {
       .catch(error => {
         console.error('Error:', error);
       }); 
+    
+    return response.answer;
 
   }
 }
