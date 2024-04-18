@@ -9,7 +9,7 @@ connectDB();
 
 app.use(express.json());
 
-app.use("/api", require("./routes/conversationRoute"))
+app.use("/api", require("./routes/conversationRoute"));
 
 mongoose.connection.once('open', () => {
   console.log("connected to MongoDB");
