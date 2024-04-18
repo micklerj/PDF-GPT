@@ -6,6 +6,10 @@ const conversationSchema = new Schema({
     type: String,
     required: true
   },
+  pdfName: {
+    type: String,
+    required: true
+  },
   qaSequence: [{
     question: {
       type: String,
