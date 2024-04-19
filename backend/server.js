@@ -7,7 +7,7 @@ const connectDB = require('./config/dbConfig')
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
-const {vectorizePDF, createConvo, convo} = require('./openAIInterface');
+//const {vectorizePDF, createConvo, convo} = require('./openAIInterface');
 const readline = require('readline');
 
 
