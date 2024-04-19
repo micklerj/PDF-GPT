@@ -1,6 +1,8 @@
+// Not sure what to put in this file to communicate with the backend
+
 const axios = require('axios');
 
-const apiKey = 'api-key';
+const apiKey = 'TBD';
 
 async function generateChatCompletion() {
     try {
