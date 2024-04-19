@@ -1,8 +1,8 @@
 import logo from './logo.svg';
 import './normal.css';
 import './App.css';
-import {useState} from 'react';
-
+import {useEffect, useState} from 'react';
+import Axios from "axios";
 
 function App() {
 
@@ -22,10 +22,20 @@ function App() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    //setChatLog([...chatLog, { user: "me", message:`${input}`}])
     let chatLogNew = [...chatLog, {user: "me", message:`${input}`}]
     setInput("");
     setChatLog(chatLogNew);
+
+    const response = await fetch("http://localhost:3500/userInput", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({input})
+    });
+    const data = await response.json();
+    setChatLog([...chatLogNew, { user: "gpt", message: `${data.message}`} ])
+    setInput("");
 
     // fetch response to the api combining the chat log array of messages
     // and sending it as a message to localhost:3000/ as a post
