@@ -16,6 +16,7 @@ connectDB();
 app.use(express.json());
 
 app.use("/api", require("./routes/conversationRoute"));
+app.use("/api", require("/routes/utilRoutes"))
 
 const pdfName = "murder_mystery_show";
 const pdfPath = "PDFs/" + pdfName;

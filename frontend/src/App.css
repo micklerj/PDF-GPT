@@ -35,6 +35,9 @@
   flex:1;
   background-color: #343541;
   position:relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .App-logo {
@@ -49,23 +52,87 @@
 }
 
 .chat-input-holder {
-  padding:24px;
-  position:absolute;
-  bottom:0;
-  left:0;right:0;
+  position: absolute;
+  bottom: 0; 
+  left: 0;
+  right: 0;
+  display: flex;
+  padding: 10px 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .chat-input-textArea {
+  flex-grow: 1; 
+  margin-right: 10px; 
+  padding: 8px 12px;
   background-color: #40414f;
-  width:90%;
-  padding:12px;
-  border-radius:5px;
-  color:white;
-  font-size:1.25em;
-  border:none;
-  outline:none;
-  box-shadow: 0 0 8px 0 rgba(0,0,0,0.25);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 1em;
+  outline: none;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.25);
+  width: 75%
 }
+
+.send-button {
+  padding: 8px 16px;
+  background-color: #61dafb;
+  color: white;
+  font-size: 1em;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+}
+
+.send-button:hover {
+  background-color: #55c0e9;
+}
+
+.file-input-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-input-label {
+  padding: 8px 16px;
+  background-color: #61dafb;
+  color: white;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.25s;
+}
+
+.file-input-label:hover {
+  background-color: #55c0e9;
+}
+
+.upload-button {
+  padding: 8px 16px;
+  margin-left: 10px;
+  background-color: #4CAF50; 
+  color: white;
+  font-size: 1em;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+}
+
+.upload-button:hover {
+  background-color: #45a049;
+}
+
 
 .App-header {
   background-color: #282c34;
@@ -84,6 +151,8 @@
 
 .chat-log {
   text-align:left;
+  overflow: auto; 
+  padding: 20px;
 }
 
 .chat-message.chatbot {
