@@ -18,16 +18,18 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use("/api", require("./routes/conversationRoute"))
 
+// name of the pdf file (minus ".pdf") being used  ,   needs to be updated if a different pdf file is uploaded
 const pdfName = "murder_mystery_show";
 const pdfPath = "PDFs/" + pdfName;
-// defailt id for testing
+
+// conversation ID for the current chat being used  ,  needs to be updated when you switch to a different conversation
 let id = '661d377d39214f37e74b6a26';
 
 // API endpoint for recieving user input
 app.post("/userInput", async (req,res) => {
   const {input} = req.body;
 
-  const AIresponse = await convo.askQuestion(id, pdfPath, `${input}`);
+  const AIresponse = await convo.askQuestion(id, pdfPath, `${input}`);    // this handles updating the batabase too
 
   res.json({
     message: AIresponse
