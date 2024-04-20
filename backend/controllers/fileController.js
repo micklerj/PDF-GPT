@@ -11,6 +11,8 @@ const ensureDirSync = (dirPath) => {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        console.log('UserID:', req.body.userId);
+        console.log('ConversationID:', req.body.conversationId);
         const userId = req.body.userId;
         const conversationId = req.body.conversationId;
         if (!userId || !conversationId) {
