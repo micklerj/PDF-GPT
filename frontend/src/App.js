@@ -1,7 +1,7 @@
+import React, { useState } from 'react';
+import axios from "axios";
 import './normal.css';
 import './App.css';
-import React, { useEffect, useState} from 'react';
-import axios from "axios";
 
 const App = () => {
   const [input, setInput] = useState("");
@@ -24,42 +24,48 @@ const App = () => {
       alert("Please select a file first!");
       return;
     }
-  
+    const userId = "user123"; 
+    const conversationId = "conv123";  
+
     const formData = new FormData();
     formData.append("file", selectedFile);
-  
+    formData.append("userId", userId);  
+    formData.append("conversationId", conversationId);  
+
     try {
       const response = await axios.post("http://localhost:3500/api/upload", formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          headers: {
+              'Content-Type': 'multipart/form-data'
+          }
       });
       alert("File uploaded successfully!");
-      console.log(response.data);  
+      console.log(response.data);
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("Error uploading file:", error.response ? error.response.data : error);
       alert("Error uploading file");
     }
   }
 
   async function handleSubmit(e) {
-    e.preventDefault(); // Prevents the form from refreshing the page
+    e.preventDefault();
     const chatLogNew = [...chatLog, { user: "Human", message: input }];
     setChatLog(chatLogNew);
 
-    const response = await axios.post("http://localhost:3500/userInput", {
-        input
-      }, {
-        headers: {
-          "Content-Type": "application/json"
-        }
-    });
-    const data = await response.json();
-    setChatLog([...chatLogNew, { user: "AI", message: data.message }]);
-    setInput("");
+    try {
+      //TODO
+      const response = await axios.post("http://localhost:3500/userInput", {
+          input
+        }, {
+          headers: {
+            "Content-Type": "application/json"
+          }
+      });
+      setChatLog([...chatLogNew, { user: "AI", message: response.data.message }]);
+      setInput("");
+    } catch (error) {
+      console.error("Error submitting chat message:", error);
+    }
   }
-
-  
 
   return (
     <div className="App">
@@ -93,7 +99,7 @@ const App = () => {
               accept=".pdf"
             />
             <label htmlFor="file" className="file-input-label">Choose PDF</label>
-            <button onClick={handleFileUpload} className="upload-button">Upload PDF</button>
+            <button onClick={() => handleFileUpload()} className="upload-button">Upload PDF</button>
           </div>
         </div>
       </section>
@@ -102,9 +108,9 @@ const App = () => {
 }
 
 const ChatMessage = ({ message }) => (
-  <div className={`chat-message ${message.user === "AI" && "chatbot"}`}>
+  <div className={`chat-message ${message.user === "AI" ? "chatbot" : ""}`}>
     <div className="chat-message-center">
-      <div className={`avatar ${message.user === "AI" && "chatbot"}`}></div>
+      <div className={`avatar ${message.user === "AI" ? "chatbot" : ""}`}></div>
       <div className="message">{message.message}</div>
     </div>
   </div>

@@ -9,10 +9,12 @@ const cors = require('cors');
 
 connectDB();
 app.use(cors());
+app.use("/api", require("./routes/fileRoutes"));
+
 app.use(express.json());
 
+app.use("/api",require("./routes/aiRoutes"));
 app.use("/api", require("./routes/conversationRoute"));
-app.use("/api", require("./routes/fileRoutes"));
 
 mongoose.connection.once('open', () => {
   console.log("connected to MongoDB");
