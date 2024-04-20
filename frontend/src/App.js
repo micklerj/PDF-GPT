@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from "axios";
 import './normal.css';
 import './App.css';
@@ -6,12 +6,15 @@ import './App.css';
 const App = () => {
   const [input, setInput] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+
+  // Make the below an empty array later, so there's no starting messages
   const [chatLog, setChatLog] = useState([
-    { user: "AI", message: "What's up, how can I help you?" },
-    { user: "Human", message: "Hey, how are you?" }
+    { user: "Human", message: "How are you today?"},
+    { user: "AI", message: "How can I help you today?"}
   ]);
   const [chatHistoryLog, setChatHistoryLog] = useState([]);
   const [chatLogInitialized, setChatLogInitialized] = useState(false);
+  const chatLogRef = useRef(null);
 
   function clearChat() {
     setChatLog([]);
@@ -59,7 +62,7 @@ const App = () => {
 
     // Setting the convo history
     if(!chatLogInitialized) {
-      setChatHistoryLog([...chatHistoryLog, {message: input}]);
+      setChatHistoryLog([{message: input}, ...chatHistoryLog]);
       setChatLogInitialized(true);
     }
 
@@ -87,29 +90,43 @@ const App = () => {
   const OldConvo = ({message}) => (
     <div className="chat-history-center">
       <div className="old-convo-button" onClick={displayOldConvo}>
-        {message.message}
+        <div className="old-convo-message">{message.message}</div>
       </div>
     </div>
   );
+
+  useEffect(() => {
+    if(chatLogRef.current) {
+      // Scroll to the bottom of the chat log when the chat log updates
+      chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
+    }
+  }, [chatLog]);
   
   return (
     <div className="App">
       <aside className="sidemenu">
-        <div className="side-menu-button" onClick={clearChat}>
-          <span>+</span> New Chat
+        <div className="upperSide">
+          <div className="side-menu-button" onClick={clearChat}>
+            <span>+</span> New Chat
+          </div>
+          <hr className="chat-history-divider" />
+          <h3>
+            Chat History
+          </h3>
+          <div className="convos">
+            <div className="chat-history">
+              {chatHistoryLog.map((message, index) => (
+                <OldConvo key={index} message={message} />
+              ))}
+            </div>
+          </div>
         </div>
-        <hr className="chat-history-divider" />
-        <h3>
-          Chat History
-        </h3>
-        <div className="chat-history">
-          {chatHistoryLog.map((message, index) => (
-            <OldConvo key={index} message={message} />
-          ))}
+        <div className="lowerSide">
+          
         </div>
       </aside>  
       <section className="chatbox">
-        <div className="chat-log">
+        <div className="chat-log" ref={chatLogRef}>
           {chatLog.map((message, index) => (
             <ChatMessage key={index} message={message} />
           ))}        
