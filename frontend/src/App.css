@@ -31,6 +31,25 @@
   background-color: rgba(255,255,255,0.1);
 }
 
+.chat-history-divider {
+  border-top: 1px solid white;
+  margin-bottom: 0px; /* Adjust spacing as needed */
+  margin-top: 25px; /* Adjust spacing as needed */
+}
+
+.old-convo-button {
+  padding:12px;
+  margin-top:0px;
+  border-radius:5px;
+  text-align: left; 
+  transition:ease 0.25s all;
+  
+}
+
+.old-convo-button:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
 .chatbox {
   flex:1;
   background-color: #343541;

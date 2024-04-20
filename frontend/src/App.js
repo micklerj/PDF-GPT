@@ -10,13 +10,18 @@ const App = () => {
     { user: "AI", message: "What's up, how can I help you?" },
     { user: "Human", message: "Hey, how are you?" }
   ]);
+  const [chatHistoryLog, setChatHistoryLog] = useState([]);
+  const [chatLogInitialized, setChatLogInitialized] = useState(false);
 
   function clearChat() {
     setChatLog([]);
+    setChatLogInitialized(false);
   }
 
   function handleFileChange(event) {
     setSelectedFile(event.target.files[0]);
+
+    // Add message like "File: 'filename' selected" somewhere maybe
   }
 
   async function handleFileUpload() {
@@ -50,6 +55,13 @@ const App = () => {
     e.preventDefault();
     const chatLogNew = [...chatLog, { user: "Human", message: input }];
     setChatLog(chatLogNew);
+    setInput("");
+
+    // Setting the convo history
+    if(!chatLogInitialized) {
+      setChatHistoryLog([...chatHistoryLog, {message: input}]);
+      setChatLogInitialized(true);
+    }
 
     try {
       //TODO
@@ -67,11 +79,33 @@ const App = () => {
     }
   }
 
+  function displayOldConvo() {
+    // Add backend request here and display to frontend
+
+  }
+
+  const OldConvo = ({message}) => (
+    <div className="chat-history-center">
+      <div className="old-convo-button" onClick={displayOldConvo}>
+        {message.message}
+      </div>
+    </div>
+  );
+  
   return (
     <div className="App">
       <aside className="sidemenu">
         <div className="side-menu-button" onClick={clearChat}>
           <span>+</span> New Chat
+        </div>
+        <hr className="chat-history-divider" />
+        <h3>
+          Chat History
+        </h3>
+        <div className="chat-history">
+          {chatHistoryLog.map((message, index) => (
+            <OldConvo key={index} message={message} />
+          ))}
         </div>
       </aside>  
       <section className="chatbox">
@@ -83,6 +117,7 @@ const App = () => {
         <div className="chat-input-holder">
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             <input
+                rows="1"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 className="chat-input-textArea"
@@ -100,11 +135,11 @@ const App = () => {
             />
             <label htmlFor="file" className="file-input-label">Choose PDF</label>
             <button onClick={() => handleFileUpload()} className="upload-button">Upload PDF</button>
-          </div>
+          </div> 
         </div>
       </section>
     </div>
-  );
+  ); 
 }
 
 const ChatMessage = ({ message }) => (
