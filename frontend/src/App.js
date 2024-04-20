@@ -1,22 +1,30 @@
+import React, { useState, useEffect, useRef } from 'react';
+import axios from "axios";
 import './normal.css';
 import './App.css';
-import React, { useEffect, useState} from 'react';
-import axios from "axios";
 
 const App = () => {
   const [input, setInput] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+
+  // Make the below an empty array later, so there's no starting messages
   const [chatLog, setChatLog] = useState([
-    { user: "AI", message: "What's up, how can I help you?" },
-    { user: "Human", message: "Hey, how are you?" }
+    { user: "Human", message: "How are you today?"},
+    { user: "AI", message: "How can I help you today?"}
   ]);
+  const [chatHistoryLog, setChatHistoryLog] = useState([]);
+  const [chatLogInitialized, setChatLogInitialized] = useState(false);
+  const chatLogRef = useRef(null);
 
   function clearChat() {
     setChatLog([]);
+    setChatLogInitialized(false);
   }
 
   function handleFileChange(event) {
     setSelectedFile(event.target.files[0]);
+
+    // Add message like "File: 'filename' selected" somewhere maybe
   }
 
   async function handleFileUpload() {
@@ -24,52 +32,105 @@ const App = () => {
       alert("Please select a file first!");
       return;
     }
-  
+    const userId = "user123";
+    //make a req to userauth sys 
+    const conversationId = "conv123";  
+    //make a req to convRoutes?
+
     const formData = new FormData();
+    formData.append("userId", userId);  
+    formData.append("conversationId", conversationId);
+    //file must be last to ensure JSON data gets parsed correctly
     formData.append("file", selectedFile);
   
+
     try {
-      const response = await axios.post("http://localhost:3500/upload", formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+      const response = await axios.post("http://localhost:3500/api/upload", formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data'
+          }
       });
       alert("File uploaded successfully!");
-      console.log(response.data);  
+      console.log(response.data);
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("Error uploading file:", error.response ? error.response.data : error);
       alert("Error uploading file");
     }
   }
 
   async function handleSubmit(e) {
-    e.preventDefault(); // Prevents the form from refreshing the page
+    e.preventDefault();
     const chatLogNew = [...chatLog, { user: "Human", message: input }];
     setChatLog(chatLogNew);
-
-    const response = await axios.post("http://localhost:3500/userInput", {
-        input
-      }, {
-        headers: {
-          "Content-Type": "application/json"
-        }
-    });
-    const data = await response.json();
-    setChatLog([...chatLogNew, { user: "AI", message: data.message }]);
     setInput("");
+
+    // Setting the convo history
+    if(!chatLogInitialized) {
+      setChatHistoryLog([{message: input}, ...chatHistoryLog]);
+      setChatLogInitialized(true);
+    }
+
+    try {
+      //TODO
+      const response = await axios.post("http://localhost:3500/userInput", {
+          input
+        }, {
+          headers: {
+            "Content-Type": "application/json"
+          }
+      });
+      setChatLog([...chatLogNew, { user: "AI", message: response.data.message }]);
+      setInput("");
+    } catch (error) {
+      console.error("Error submitting chat message:", error);
+    }
   }
 
-  
+  function displayOldConvo() {
+    // Add backend request here and display to frontend
 
+  }
+
+  const OldConvo = ({message}) => (
+    <div className="chat-history-center">
+      <div className="old-convo-button" onClick={displayOldConvo}>
+        <div className="old-convo-message">{message.message}</div>
+      </div>
+    </div>
+  );
+
+  useEffect(() => {
+    if(chatLogRef.current) {
+      // Scroll to the bottom of the chat log when the chat log updates
+      chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
+    }
+  }, [chatLog]);
+  
   return (
     <div className="App">
       <aside className="sidemenu">
-        <div className="side-menu-button" onClick={clearChat}>
-          <span>+</span> New Chat
+        <div className="upperSide">
+          <div className="side-menu-button" onClick={clearChat}>
+            <span>+</span> New Chat
+          </div>
+          <hr className="chat-history-divider" />
+          <h3>
+            Chat History
+          </h3>
+          <div className="convos">
+            <div className="chat-history">
+              {chatHistoryLog.map((message, index) => (
+                <OldConvo key={index} message={message} />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="lowerSide">
+          
         </div>
       </aside>  
       <section className="chatbox">
-        <div className="chat-log">
+        <div className="chat-log" ref={chatLogRef}>
           {chatLog.map((message, index) => (
             <ChatMessage key={index} message={message} />
           ))}        
@@ -77,6 +138,7 @@ const App = () => {
         <div className="chat-input-holder">
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             <input
+                rows="1"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 className="chat-input-textArea"
@@ -93,18 +155,18 @@ const App = () => {
               accept=".pdf"
             />
             <label htmlFor="file" className="file-input-label">Choose PDF</label>
-            <button onClick={handleFileUpload} className="upload-button">Upload PDF</button>
-          </div>
+            <button onClick={() => handleFileUpload()} className="upload-button">Upload PDF</button>
+          </div> 
         </div>
       </section>
     </div>
-  );
+  ); 
 }
 
 const ChatMessage = ({ message }) => (
-  <div className={`chat-message ${message.user === "AI" && "chatbot"}`}>
+  <div className={`chat-message ${message.user === "AI" ? "chatbot" : ""}`}>
     <div className="chat-message-center">
-      <div className={`avatar ${message.user === "AI" && "chatbot"}`}></div>
+      <div className={`avatar ${message.user === "AI" ? "chatbot" : ""}`}></div>
       <div className="message">{message.message}</div>
     </div>
   </div>

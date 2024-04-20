@@ -8,6 +8,4 @@ router.post('/createConversation', conversationController.newConversation);
 
 router.put('/addQA/:convID', conversationController.addQA);
 
-router.post('/askQuestion', convo.askQuestion);
-
 module.exports = router;
