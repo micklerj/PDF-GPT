@@ -40,7 +40,6 @@ const App = () => {
     //file must be last to ensure JSON data gets parsed correctly
     formData.append("file", selectedFile);
   
-
     try {
       const response = await axios.post("http://localhost:3500/api/upload", formData, {
           headers: {
@@ -85,6 +84,7 @@ const App = () => {
 
   function displayOldConvo() {
     // Add backend request here and display to frontend
+    //axios.get(`http://localhost:3500/getConversation/convID?${convID}`)
 
   }
 
