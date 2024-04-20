@@ -13,7 +13,7 @@ app.use("/api", require("./routes/fileRoutes"));
 
 app.use(express.json());
 
-app.use("/api",require("./routes/aiRoutes"));
+//app.use("/api",require("./routes/aiRoutes"));
 app.use("/api", require("./routes/conversationRoute"));
 
 mongoose.connection.once('open', () => {

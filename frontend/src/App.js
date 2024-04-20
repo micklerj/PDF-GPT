@@ -32,13 +32,17 @@ const App = () => {
       alert("Please select a file first!");
       return;
     }
-    const userId = "user123"; 
+    const userId = "user123";
+    //make a req to userauth sys 
     const conversationId = "conv123";  
+    //make a req to convRoutes?
 
     const formData = new FormData();
-    formData.append("file", selectedFile);
     formData.append("userId", userId);  
-    formData.append("conversationId", conversationId);  
+    formData.append("conversationId", conversationId);
+    //file must be last to ensure JSON data gets parsed correctly
+    formData.append("file", selectedFile);
+  
 
     try {
       const response = await axios.post("http://localhost:3500/api/upload", formData, {
