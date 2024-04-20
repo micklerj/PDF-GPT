@@ -1,131 +1,209 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import axios from "axios";
 import './normal.css';
 import './App.css';
-import {useEffect, useState} from 'react';
-import Axios from "axios";
 
-function App() {
-
-  // add state for input and chat log 
+const App = () => {
   const [input, setInput] = useState("");
-  const [chatLog, setChatLog] = useState([{
-    user: "gpt",
-    message: "How can I help you today?"
-  }, {
-    user: "me",
-    message: "I want to use ChatGPT today"
-  }]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [chatLog, setChatLog] = useState([
+    { user: "AI", message: "What's up, how can I help you?" },
+    { user: "Human", message: "Hey, how are you?" }
+  ]);
+  const [chatHistoryLog, setChatHistoryLog] = useState([]);
+  const [chatLogInitialized, setChatLogInitialized] = useState(false);
 
   function clearChat() {
     setChatLog([]);
+    setChatLogInitialized(false);
+  }
+
+  function handleFileChange(event) {
+    setSelectedFile(event.target.files[0]);
+
+    // Add message like "File: 'filename' selected" somewhere maybe
+  }
+
+  async function handleFileUpload() {
+    if (!selectedFile) {
+      alert("Please select a file first!");
+      return;
+    }
+    const userId = "user123"; 
+    const conversationId = "conv123";  
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    formData.append("userId", userId);  
+    formData.append("conversationId", conversationId);  
+
+    try {
+      const response = await axios.post("http://localhost:3500/api/upload", formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data'
+          }
+      });
+      alert("File uploaded successfully!");
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error uploading file:", error.response ? error.response.data : error);
+      alert("Error uploading file");
+    }
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    let chatLogNew = [...chatLog, {user: "me", message:`${input}`}]
-    setInput("");
+    const chatLogNew = [...chatLog, { user: "Human", message: input }];
     setChatLog(chatLogNew);
-
-    const response = await fetch("http://localhost:3500/userInput", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({input})
-    });
-    const data = await response.json();
-    setChatLog([...chatLogNew, { user: "gpt", message: `${data.message}`} ])
     setInput("");
 
-    // fetch response to the api combining the chat log array of messages
-    // and sending it as a message to localhost:3000/ as a post
+    // Setting the convo history
+    if(!chatLogInitialized) {
+      setChatHistoryLog([...chatHistoryLog, {message: input}]);
+      setChatLogInitialized(true);
+    }
 
-    // Need stuff in the index.js that's in the frontend folder
-    // to handle this fetch to the api
+    try {
+      //TODO
+      const response = await axios.post("http://localhost:3500/userInput", {
+          input
+        }, {
+          headers: {
+            "Content-Type": "application/json"
+          }
+      });
+      setChatLog([...chatLogNew, { user: "AI", message: response.data.message }]);
+      setInput("");
+    } catch (error) {
+      console.error("Error submitting chat message:", error);
+    }
+  }
+
+  function displayOldConvo() {
+    // Add backend request here and display to frontend
 
   }
 
-  return (
-    <div className="App">
-    <aside className = "sidemenu">
-      <div className="side-menu-button" onClick={clearChat}>
-        <span>+</span>
-        New Chat
+  const OldConvo = ({message}) => (
+    <div className="chat-history-center">
+      <div className="old-convo-button" onClick={displayOldConvo}>
+        {message.message}
       </div>
-    </aside>  
-    <section className = "chatbox">
-      <div className="chat-log">
-        {chatLog.map((message, index) => (
-          <ChatMessage key={index} message = {message} />
-        ))}
-      </div>
-
-      <div className = "chat-input-holder">
-        <form onSubmit={handleSubmit}>
-        <input
-        rows="1"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        className="chat-input-textArea">
-        </input>
-        </form>
-      </div>
-    </section>
     </div>
   );
+  
+  return (
+    <div className="App">
+      <aside className="sidemenu">
+        <div className="side-menu-button" onClick={clearChat}>
+          <span>+</span> New Chat
+        </div>
+        <hr className="chat-history-divider" />
+        <h3>
+          Chat History
+        </h3>
+        <div className="chat-history">
+          {chatHistoryLog.map((message, index) => (
+            <OldConvo key={index} message={message} />
+          ))}
+        </div>
+      </aside>  
+      <section className="chatbox">
+        <div className="chat-log">
+          {chatLog.map((message, index) => (
+            <ChatMessage key={index} message={message} />
+          ))}        
+        </div>
+        <div className="chat-input-holder">
+          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+            <input
+                rows="1"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="chat-input-textArea"
+                placeholder="Chat with PDF-GPT"
+            />
+            <button type="submit" className="send-button">Send</button>
+          </form>
+          <div className="file-input-container">
+            <input
+              type="file"
+              id="file"
+              className="file-input"
+              onChange={handleFileChange}
+              accept=".pdf"
+            />
+            <label htmlFor="file" className="file-input-label">Choose PDF</label>
+            <button onClick={() => handleFileUpload()} className="upload-button">Upload PDF</button>
+          </div> 
+        </div>
+      </section>
+    </div>
+  ); 
 }
 
-const ChatMessage = ({message}) => {
-  return (
-    <div className={`chat-message ${message.user === "gpt" && "chatbot"}`}>
-      <div className="chat-message-center">
-        <div className={`avatar ${message.user === "gpt" && "chatbot"}`}>
-          
-        </div>
-        <div className="message">
-          {message.message}
-        </div>
-      </div>
+const ChatMessage = ({ message }) => (
+  <div className={`chat-message ${message.user === "AI" ? "chatbot" : ""}`}>
+    <div className="chat-message-center">
+      <div className={`avatar ${message.user === "AI" ? "chatbot" : ""}`}></div>
+      <div className="message">{message.message}</div>
     </div>
-  )
-}
+  </div>
+);
 
 export default App;
 
 /*
-Things you need to add:
-- Some kind of upload pdf button
-- Some kind of message saying the pdf was uploaded and processed correctly
+Current issues I see:
+- For longer messages the circle avatar thing compresses and becomes an oval
+- Add 'filename' uploaded successfully message
+- For longer conversations where you need to scroll the messages go behind the text box
+  and the ones at the bottom of the screen can be partially blocked by the text box, so
+  need to setup some kind of scroll boundary or something like that
 
-- Integration with the database to store chat histories
-- Integration with the actual backend and API to have the app actually functioning
-- REST API, probably don't need to use OpenAI's API
-
-- An initial login screen integrated with the login and authentication stuff Nick has been doing
-- Some sort of button for settings and the like
-- The actual settings page that the settings button corresponds to
 */
 
+// Some deleted stuff:
 /*
-        <div className="chat-message">
-          <div className="chat-message-center">
-            <div className="avatar">
-            
-            </div>
-            <div className="message">
-              Hello World
-            </div>
-          </div>
-        </div>
+Some deleted stuff:
 
-        <div className="chat-message chatbot">
-          <div className="chat-message-center">
-            <div className="avatar chatbot">
-            
-            </div>
-            <div className="message">
-              I am a chatbot
-            </div>
-          </div>
-        </div>
+<div className="old-convo-button" onClick={displayOldConvo}>
+  Yo soy old convo
+</div>
+*/
+
+// Most recent changes you've made
+/*
+Added:
+const [chatHistoryLog, setChatHistoryLog] = useState([
+  {message: "I am an old convo"}
+]);
+
+Added:
+<hr className="chat-history-divider" />
+  <h3>
+    Chat History
+  </h3>
+  <div className="chat-history">
+    {chatHistoryLog.map((message, index) => (
+      <OldConvo key={index} message={message} />
+    ))}
+  </div>
+
+Added:
+function displayOldConvo() {
+  // Add backend request here and display to frontend
+
+}
+
+const OldConvo = ({message}) => (
+  <div className="chat-history-center">
+    <div className="old-convo-button" onClick={displayOldConvo}>
+      {message.message}
+    </div>
+  </div>
+);
+
+Added in handleSubmit():
+setChatHistoryLog([...chatHistoryLog, {message: input}]);
 */
