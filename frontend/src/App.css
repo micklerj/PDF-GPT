@@ -31,10 +31,20 @@
   background-color: rgba(255,255,255,0.1);
 }
 
+.upperSide {
+  height: 80%;
+}
+
+.convos {
+  overflow: auto;
+  border-bottom: 1px solid rgb(255, 255, 255);
+  height: 80%;
+}
+
 .chat-history-divider {
   border-top: 1px solid white;
-  margin-bottom: 0px; /* Adjust spacing as needed */
-  margin-top: 25px; /* Adjust spacing as needed */
+  margin-bottom: 0px; 
+  margin-top: 25px; 
 }
 
 .old-convo-button {
@@ -50,6 +60,13 @@
   background-color: rgba(255,255,255,0.1);
 }
 
+.old-convo-message {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+}
+
 .chatbox {
   flex:1;
   background-color: #343541;
@@ -57,6 +74,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  
 }
 
 .App-logo {
@@ -172,6 +190,7 @@
   text-align:left;
   overflow: auto; 
   padding: 20px;
+  height: 87.5%
 }
 
 .chat-message.chatbot {
