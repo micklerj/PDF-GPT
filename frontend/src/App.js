@@ -83,9 +83,9 @@ const App = () => {
   }
 
   function displayOldConvo() {
-    // Add backend request here and display to frontend
     //axios.get(`http://localhost:3500/getConversation/convID?${convID}`)
-
+    //returns 3 body params: convID, pdf-name, qaSequence
+    //qaSequence is an array of strings
   }
 
   const OldConvo = ({message}) => (
