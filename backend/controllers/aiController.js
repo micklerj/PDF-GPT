@@ -16,7 +16,14 @@ const {MessagesPlaceholder} = require('@langchain/core/prompts');
 const axios = require('axios');
 
 // vectorize the pdf file into a local vector store
-const vectorizePDF = async (pdfPath) => {
+// param: pdfPath
+exports.vectorizePDF = async(req, res) => {
+  const { pdfPath } = req.body;
+
+  if(!pdfPath) {
+    return res.status(400);
+  }
+
   const fullPdfPath = `./${pdfPath}.pdf`;
   const VECTOR_STORE_PATH = `./${pdfPath}.index`;
 
@@ -54,7 +61,15 @@ const genSessionID = async () => {
 }
 
 // generate a new conversation, return the sessionId
-const createConvo = async (pdfName) => {
+// param: pdfName
+// response: convID of new convo
+exports.createConvo = async(req, res) => {
+  const { pdfName } = req.body;
+
+  if(!pdfName ) {
+    return res.status(400);
+  }
+
   const id = await genSessionID();
   const postData = {
     "convID": id,
@@ -62,25 +77,33 @@ const createConvo = async (pdfName) => {
     "qaSequence": []
   };
   
-  axios.post('http://localhost:3500/api/createConversation', postData)
+  await axios.post('http://localhost:3500/api/createConversation', postData)
     .catch(error => {
       console.error('Error:', error);
     });
 
-  return id;
+  res.status(201).json({ convID: id });
 }
 
 
-const convo = {
+exports.convo = {
   chatHistory: [],
 
   // upon switching to a new chat, update local chatHistory with chat history from mongoDB
-  updateHistory: async function(id) {
+  // params: convID
+  // response: qaSequence
+  updateHistory: async (req, res) => {
+    const { id } = req.body;
+
+    if(!id ) {
+      return res.status(400);
+    }
+
     axios.get('http://localhost:3500/api/getConversation/?convID=' + id)
     .then(response => {
 
       // clear local chatHistory
-      this.chatHistory = [];
+      exports.convo.chatHistory = [];
 
       // Access the chat history from the response data
       const QAs = response.data.qaSequence;
@@ -89,9 +112,11 @@ const convo = {
         const answer = document.answer;
 
         // add entries to chat history
-        this.chatHistory.push(new HumanMessage(question));
-        this.chatHistory.push(new AIMessage(answer));
+        exports.convo.chatHistory.push(new HumanMessage(question));
+        exports.convo.chatHistory.push(new AIMessage(answer));
       });
+      // return the qaSequence in the response to display on frontend
+      res.status(201).json({ qaSequence: QAs });
     })
       .catch(error => {
         console.error('Error:', error);
@@ -99,7 +124,16 @@ const convo = {
   },
 
   // pass in user input to chat bot
-  askQuestion: async function(id, pdfPath, user_input) {
+  // params: convID, pdfPath, user_input
+  // response: AI response
+  askQuestion: async (req, res) => {
+    const { id, pdfPath, input } = req.body;
+    const user_input = `${input}`;
+
+    if(!id || !pdfPath || !user_input) {
+      return res.status(400);
+    }
+
     const model = new ChatOpenAI({});
 
     // vector store retriever
@@ -153,8 +187,8 @@ const convo = {
     });
 
     // add entries to chat history
-    this.chatHistory.push(new HumanMessage(user_input));
-    this.chatHistory.push(new AIMessage(response.answer));
+    exports.convo.chatHistory.push(new HumanMessage(user_input));
+    exports.convo.chatHistory.push(new AIMessage(response.answer));
 
     // add entries to database
     const putData = {
@@ -165,15 +199,16 @@ const convo = {
       .catch(error => {
         console.error('Error:', error);
       }); 
-    
-    return response.answer;
+
+    res.status(201).json({
+      message: response.answer
+    });
 
   }
-  //implement user Input
   
 }
 
 
 
 
-module.exports = {vectorizePDF, createConvo, convo};
+//module.exports = {vectorizePDF, createConvo, convo};

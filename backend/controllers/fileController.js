@@ -11,18 +11,21 @@ const ensureDirSync = (dirPath) => {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        console.log('UserID:', req.body.userId);
+        console.log('ConversationID:', req.body.conversationId);
         const userId = req.body.userId;
         const conversationId = req.body.conversationId;
         if (!userId || !conversationId) {
             return cb(new Error("Missing user ID or conversation ID"), false);
         }
 
-        const uploadPath = path.join('pdf-uploads', userId, conversationId);
+        const uploadPath = path.join('pdf-uploads', userId);
         ensureDirSync(uploadPath);
         cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
-        cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+        cb(null, file.originalname);
+        //cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
     }
 });
 
