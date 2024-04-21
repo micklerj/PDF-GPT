@@ -77,7 +77,7 @@ exports.createConvo = async(req, res) => {
     "qaSequence": []
   };
   
-  axios.post('http://localhost:3500/api/createConversation', postData)
+  await axios.post('http://localhost:3500/api/createConversation', postData)
     .catch(error => {
       console.error('Error:', error);
     });
@@ -103,7 +103,7 @@ exports.convo = {
     .then(response => {
 
       // clear local chatHistory
-      this.chatHistory = [];
+      exports.convo.chatHistory = [];
 
       // Access the chat history from the response data
       const QAs = response.data.qaSequence;
@@ -112,8 +112,8 @@ exports.convo = {
         const answer = document.answer;
 
         // add entries to chat history
-        this.chatHistory.push(new HumanMessage(question));
-        this.chatHistory.push(new AIMessage(answer));
+        exports.convo.chatHistory.push(new HumanMessage(question));
+        exports.convo.chatHistory.push(new AIMessage(answer));
       });
       // return the qaSequence in the response to display on frontend
       res.status(201).json({ qaSequence: QAs });
@@ -127,7 +127,8 @@ exports.convo = {
   // params: convID, pdfPath, user_input
   // response: AI response
   askQuestion: async (req, res) => {
-    const { id, pdfPath, user_input } = req.body;
+    const { id, pdfPath, input } = req.body;
+    const user_input = `${input}`;
 
     if(!id || !pdfPath || !user_input) {
       return res.status(400);
@@ -186,8 +187,8 @@ exports.convo = {
     });
 
     // add entries to chat history
-    this.chatHistory.push(new HumanMessage(user_input));
-    this.chatHistory.push(new AIMessage(response.answer));
+    exports.convo.chatHistory.push(new HumanMessage(user_input));
+    exports.convo.chatHistory.push(new AIMessage(response.answer));
 
     // add entries to database
     const putData = {

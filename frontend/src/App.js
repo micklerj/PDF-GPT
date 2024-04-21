@@ -11,37 +11,38 @@ const App = () => {
   const [currentPdfPath, setCurrentPdfPath] = useState(null);    // pdf path without the extension
   const [currentPdfName, setCurrentPdfName] = useState(null);    // pdf name without the extension
   // hard-coded for now:
-  setCurrentUserID("user123");
-  setCurrentConvID("conv123");
 
   // Make the below an empty array later, so there's no starting messages
   const [chatLog, setChatLog] = useState([
-    { user: "Human", message: "How are you today?"},
-    { user: "AI", message: "How can I help you today?"}
+    { user: "AI", message: "Hey, PDF-GPT here. Upload a pdf file below and start a conversation!"},
   ]);
   const [chatHistoryLog, setChatHistoryLog] = useState([]);
   const [chatLogInitialized, setChatLogInitialized] = useState(false);
   const chatLogRef = useRef(null);
 
-  async function handleCreateNewChat() {
-    // clear chat
-    setChatLog([]);
-    setChatLogInitialized(false);
-
+  async function handleVectorizePDF() {
     // vectorizePDF for current uploaded file
     try {
       const postData = {
         "pdfPath": currentPdfPath   
       };
+      console.log("test1");
 
       await axios.post("http://localhost:3500/api/vectorize", postData, {
         headers: {
           "Content-Type": "application/json"
         }
-      });      
+      });    
+      console.log("test2");  
     } catch (error) {
       console.error("Error vectorizing pdf file:", error);
+      console.log("test3");
     }
+  }
+  async function handleCreateNewChat() {
+    // clear chat
+    setChatLog([]);
+    setChatLogInitialized(false);
 
     // create new convo   
     try {
@@ -55,7 +56,7 @@ const App = () => {
         }
       });  
       // update current convID
-      setCurrentConvID(response.data.convID);    
+      setCurrentConvID(response.data.convID);  
     } catch (error) {
       console.error("Error creating new convo:", error);
     }
@@ -65,9 +66,8 @@ const App = () => {
 
   // use this when selcecting an old chat
   async function handleOpenOldChat() {
-    // clear chat
+    // clear frontend chat
     setChatLog([]);
-    setChatLogInitialized(false);
 
     // vectorizePDF for current uploaded pdf file
     try {
@@ -91,11 +91,11 @@ const App = () => {
 
     // update chat history
     try {
-      const postData = {
+      const putData = {
         "id": currentConvID
       };
 
-      const response = await axios.post("http://localhost:3500/api/initOldChat", postData, {
+      const response = await axios.put("http://localhost:3500/api/initOldChat", putData, {
         headers: {
           "Content-Type": "application/json"
         }
@@ -121,7 +121,7 @@ const App = () => {
   function handleFileChange(event) {
     setSelectedFile(event.target.files[0]);
 
-    // Add message like "File: 'filename' selected" somewhere maybe
+    // TODO:     Add message like "File: 'filename' selected" somewhere
   }
 
   async function handleFileUpload() {
@@ -129,6 +129,8 @@ const App = () => {
       alert("Please select a file first!");
       return;
     }
+
+    setCurrentUserID("user123");
 
     const formData = new FormData();
     formData.append("userId", currentUserID);  
@@ -145,6 +147,13 @@ const App = () => {
       });
       alert("File uploaded successfully!");
       console.log(response.data);
+
+      // update current pdf file path and name 
+      const fileName = selectedFile.name;
+      const fileNameNoExtension = fileName.substring(0, fileName.lastIndexOf('.'));
+      await setCurrentPdfPath(`pdf-uploads/${currentUserID}/${fileNameNoExtension}`);
+      await setCurrentPdfName(`${fileNameNoExtension}`);
+
     } catch (error) {
       console.error("Error uploading file:", error.response ? error.response.data : error);
       alert("Error uploading file");
@@ -156,17 +165,17 @@ const App = () => {
     const chatLogNew = [...chatLog, { user: "Human", message: input }];
     setChatLog(chatLogNew);
 
-    // Setting the convo history                  do we need this?
-    /*if(!chatLogInitialized) {
+    // Setting the convo history                  
+    if(!chatLogInitialized) {
       setChatHistoryLog([{message: input}, ...chatHistoryLog]);
       setChatLogInitialized(true);
-    }*/
+    }
 
     try {
       const postData = {
         "id": currentConvID,
         "pdfPath": currentPdfPath,
-        "user_input": input
+        "input": input
       };
 
       const response = await axios.post("http://localhost:3500/api/userInput", postData, {
@@ -200,12 +209,16 @@ const App = () => {
       chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
     }
   }, [chatLog]);
+
+  useEffect(() => {
+    console.log("currentConvID: ", currentConvID);
+  }, [currentConvID]);
   
   return (
     <div className="App">
       <aside className="sidemenu">
         <div className="upperSide">
-          <div className="side-menu-button" onClick={handleCreateNewChat}>
+          <div className="side-menu-button" onClick={async () => { await handleCreateNewChat(); handleVectorizePDF(); } }>
             <span>+</span> New Chat
           </div>
           <hr className="chat-history-divider" />

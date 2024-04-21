@@ -19,12 +19,13 @@ const storage = multer.diskStorage({
             return cb(new Error("Missing user ID or conversation ID"), false);
         }
 
-        const uploadPath = path.join('pdf-uploads', userId, conversationId);
+        const uploadPath = path.join('pdf-uploads', userId);
         ensureDirSync(uploadPath);
         cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
-        cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+        cb(null, file.originalname);
+        //cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
     }
 });
 
