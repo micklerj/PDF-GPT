@@ -3,21 +3,29 @@ const express = require('express');
 const app = express();
 const PORT = process.env.port || 3500; //backend will run on local port 3500
 const mongoose = require('mongoose');
-const connectDB = require('./config/dbConfig')
+const verifyJWT = require('./middleware/verifyJWT');
+const cookieParser = require('cookie-parser');
+const connectDB = require('./config/dbConfig');
 
-
-//for login authentication
-const authenticate = require('./routes/authen');
-const protectedRoute = require('./routes/proroute');
-
+// Connect to MongoDB
 connectDB();
 
+// Middleware for json
 app.use(express.json());
 
-app.use('/auth', authenticate);
-app.use('/protected', protectedRoute);
+// Middleware for cookies
+app.use(cookieParser());
 
+//routes for conversation
 app.use("/api", require("./routes/conversationRoute"))
+
+//routes for register, login, refersh, and logout
+app.use('/register', require('./routes/registerRoute'));
+app.use('/auth', require('./routes/authRoute'));
+app.use('/refresh', require('./routes/refreshRoute'));
+app.use('/logout', require('./routes/logoutRoute'));
+app.use(verifyJWT);
+
 
 mongoose.connection.once('open', () => {
   console.log("connected to MongoDB");
