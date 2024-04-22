@@ -35,7 +35,6 @@ exports.vectorizePDF = async(req, res) => {
   } else {
     // If the vector store file doesn't exist, create it
     console.log('Creating vector store...');
-
     //const text = fs.readFileSync("murder_mystery_show.txt", "utf8");    // for .txt files
     const dataBuffer = fs.readFileSync(fullPdfPath);
     const data = await pdf(dataBuffer);
@@ -98,15 +97,17 @@ exports.convo = {
     if(!id ) {
       return res.status(400);
     }
-
+    console.log('here231')
     axios.get('http://localhost:3500/api/getConversation/?convID=' + id)
     .then(response => {
 
       // clear local chatHistory
       exports.convo.chatHistory = [];
-
+      
       // Access the chat history from the response data
       const QAs = response.data.qaSequence;
+      console.log('here');
+      console.log(QAs);
       QAs.forEach(document => {
         const question = document.question;
         const answer = document.answer;

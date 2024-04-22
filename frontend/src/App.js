@@ -62,41 +62,37 @@ const App = () => {
 
   // use this when selcecting an old chat
   async function handleOpenOldChat(convID) {
-    // clear frontend chat
-    await setChatLog([]);
-    console.log("old chat id: ", convID);
+    console.log("Starting to open old chat with convID:", convID);
+
+    setChatLog([]);
     setCurrentConvID(convID); 
+    console.log("Chat log cleared and currentConvID set to:", convID);
 
-    // update chat history
     try {
-      const getData = {
-        "id": convID
-      };
+        console.log("Making API call to initialize old chat");
+        const response = await axios.get(`http://localhost:3500/api/initOldChat?id=${convID}`, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
 
-      const response = await axios.get("http://localhost:3500/api/initOldChat", getData, {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });    
-      // display old chat history on frontend
-      const QAs = response.data.qaSequence;
-      console.log(QAs);
-      QAs.forEach(document => {
-        const question = document.question;
-        const answer = document.answer;
+        console.log("API call successful, response data:", response.data);
+        
+        const QAs = response.data.qaSequence;
+        let newLog = QAs.map(document => ([
+            { user: "Human", message: document.question },
+            { user: "AI", message: document.answer }
+        ])).flat();
 
-        // add entries to chat log
-        setChatLog([...chatLog, { user: "Human", message: question }, { user: "AI", message: answer }]);
-        /*const chatLogNew = [...chatLog, { user: "Human", message: question }];
-        setChatLog(chatLogNew);
-        const chatLogNew2 = [...chatLog, { user: "AI", message: answer }];
-        setChatLog(chatLogNew2);*/
-      });
+        console.log("New chat log prepared, setting state:", newLog);
+        setChatLog(newLog);
+        console.log("Chat log state set.");
     } catch (error) {
-      console.error("Error opening old chat:", error);
+        console.error("Error opening old chat:", error);
+        console.log("Failed to open old chat:", error.response ? error.response.data : error);
     }
+}
 
-  }
 
   function handleFileChange(event) {
     setSelectedFile(event.target.files[0]);
