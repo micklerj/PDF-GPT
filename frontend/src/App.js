@@ -63,17 +63,18 @@ const App = () => {
   // use this when selcecting an old chat
   async function handleOpenOldChat(convID) {
     // clear frontend chat
-    await setChatLog([]);
+    setChatLog([]);
+
     console.log("old chat id: ", convID);
     setCurrentConvID(convID); 
 
     // update chat history
     try {
-      const getData = {
+      const postData = {
         "id": convID
       };
 
-      const response = await axios.get("http://localhost:3500/api/initOldChat", getData, {
+      const response = await axios.post("http://localhost:3500/api/initOldChat", postData, {
         headers: {
           "Content-Type": "application/json"
         }

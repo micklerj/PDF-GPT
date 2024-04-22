@@ -94,10 +94,10 @@ exports.convo = {
   // response: qaSequence
   updateHistory: async (req, res) => {
     const { id } = req.body;
-
     if(!id ) {
       return res.status(400);
     }
+    console.log("id: ", id);
 
     axios.get('http://localhost:3500/api/getConversation/?convID=' + id)
     .then(response => {
