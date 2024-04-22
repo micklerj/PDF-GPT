@@ -1,7 +1,12 @@
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useContext } from 'react';
+import AuthContext from './context/AuthProvider';
+
+import axios from './api/axios';
+const LOGIN_URL = './authRoute';
+
 const Login = () => {
-    // Take a look at SetAuth  
+    const { setAuth } = useContext(AuthContext);
     const userRef = useRef();
     const errRef = useRef();
 
@@ -21,10 +26,33 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(user, pwd);
-        setUser('');
-        setPwd('');
-        setSuccess(true)
+
+        try {
+            const response = await axios.post(LOGIN_URL,
+                JSON.stringify({ user, pwd }),
+                { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
+            );
+
+            console.log(JSON.stringify(response?.data));
+
+            const accessToken = response?.data?.accessToken;
+            const convos = response?.data?.convos; // Array of conversation objects, implement later
+            setAuth({ user, pwd, accessToken, convos });
+            setUser('');
+            setPwd('');
+            setSuccess(true);
+        } catch (err) {
+            if (!err?.response) {
+                setErrMsg('No Server Response');
+            } else if (err.response.status === 400) {
+                setErrMsg('Missing Username or Password');
+            } else if (err.response.status === 401) {
+                setErrMsg('Invalid Username or Password');
+            } else {
+                setErrMsg('Failed to Login');
+            }
+            errRef.current.focus();
+        }
     }
 
     return (
@@ -41,7 +69,7 @@ const Login = () => {
                 <section>
                     <p ref={errRef} className={errMsg ? "errmsg" :
                         "offscreen"} aria-live="assertive">{errMsg}</p>
-                    <h1> Sign In</h1>
+                    <h1> Login </h1>
                     <form onSubmit={handleSubmit}>
                         <label htmlFor="username">Username:</label>
                         <input
@@ -63,7 +91,7 @@ const Login = () => {
                             value={pwd}
                             required
                         />
-                        <button>Sign In</button>
+                        <button> Log In</button>
                     </form>
                     <p>
                         Need an account?<br />

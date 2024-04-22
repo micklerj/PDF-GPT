@@ -15,6 +15,7 @@ const handleLogin = async (req, res) => {
     }
     const match = await bcrypt.compare(password, user.password);
     if (match) {
+        const convos = []; // Implement later
         const accessToken = jwt.sign({ username: user.username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
         const refreshToken = jwt.sign({ username: user.username }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' });
 
@@ -23,7 +24,7 @@ const handleLogin = async (req, res) => {
         console.log(result);
 
         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', maxAge: 86400000 });
-        res.json({ accessToken });
+        res.json({ convos, accessToken }); // Array of conversation objects, implement later
     } else {
         res.sendStatus(401);
     }
