@@ -7,14 +7,31 @@ const connectDB = require('./config/dbConfig')
 const cors = require('cors');
 
 
+const verifyJWT = require('./middleware/verifyJWT');
+const cookieParser = require('cookie-parser');
+const connectDB = require('./config/dbConfig');
+
+// Connect to MongoDB
 connectDB();
 app.use(cors());
 app.use("/api", require("./routes/fileRoutes"));
 
+// Middleware for json
 app.use(express.json());
 
-app.use("/api",require("./routes/aiRoutes"));
-app.use("/api", require("./routes/conversationRoute"));
+// Middleware for cookies
+app.use(cookieParser());
+
+//routes for conversation
+app.use("/api", require("./routes/conversationRoute"))
+
+//routes for register, login, refersh, and logout
+app.use('/register', require('./routes/registerRoute'));
+app.use('/auth', require('./routes/authRoute'));
+app.use('/refresh', require('./routes/refreshRoute'));
+app.use('/logout', require('./routes/logoutRoute'));
+app.use(verifyJWT);
+
 
 mongoose.connection.once('open', () => {
   console.log("connected to MongoDB");
