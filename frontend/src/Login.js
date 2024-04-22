@@ -1,7 +1,8 @@
 
 import { useRef, useState, useEffect, useContext } from 'react';
 import AuthContext from './context/AuthProvider';
-
+import './normal.css';
+import './Login.css';
 import axios from './api/axios';
 const LOGIN_URL = './authRoute';
 
