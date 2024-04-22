@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import axios from "axios";
 import './normal.css';
 import './App.css';
+
+const RootWithRouter = () => (
+  <Router>
+    <App />
+  </Router>
+);
 
 const App = () => {
   const [input, setInput] = useState("");
@@ -13,12 +21,15 @@ const App = () => {
   // hard-coded for now:
 
   // Make the below an empty array later, so there's no starting messages
-  const [chatLog, setChatLog] = useState([
-    { user: "AI", message: "Hey, PDF-GPT here. Upload a pdf file below and start a conversation!"},
-  ]);
+  const [chatLog, setChatLog] = useState([]);
   const [chatHistoryLog, setChatHistoryLog] = useState([]);
   const [chatLogInitialized, setChatLogInitialized] = useState(false);
+  const [showChatInput, setShowChatInput] = useState(false);
   const chatLogRef = useRef(null);
+
+  // Login/logout stuff
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const navigate = useNavigate();
 
   async function handleVectorizePDF() {
     // vectorizePDF for current uploaded file
@@ -43,6 +54,7 @@ const App = () => {
     // clear chat
     setChatLog([]);
     setChatLogInitialized(false);
+    setShowChatInput(true);
 
     // create new convo   
     try {
@@ -68,6 +80,7 @@ const App = () => {
   async function handleOpenOldChat() {
     // clear frontend chat
     setChatLog([]);
+    setShowChatInput(true);
 
     // vectorizePDF for current uploaded pdf file
     try {
@@ -164,6 +177,7 @@ const App = () => {
     e.preventDefault();
     const chatLogNew = [...chatLog, { user: "Human", message: input }];
     setChatLog(chatLogNew);
+    setInput("");
 
     // Setting the convo history                  
     if(!chatLogInitialized) {
@@ -187,7 +201,7 @@ const App = () => {
     } catch (error) {
       console.error("Error submitting chat message:", error);
     }
-    setInput("");
+    //setInput("");
   }
 
   function displayOldConvo() {
@@ -195,17 +209,27 @@ const App = () => {
 
   }
 
+  // Need to change 'displayOldConvo' to 'handleOpenOldChat' once it's ready
   const OldConvo = ({message}) => (
     <div className="chat-history-center">
-      <div className="old-convo-button" onClick={displayOldConvo}>
+      <div className="old-convo-button" onClick={handleOpenOldChat}>
         <div className="old-convo-message">{message.message}</div>
       </div>
     </div>
   );
 
+  // Handles logout tasks
+  const handleLogout = () => {
+
+    // TODO: Clear user authentication tokens or session data here
+
+    setIsLoggedIn(false);
+    navigate('/login');
+  };
+
+  // Scroll to the bottom of the chat log when the chat log updates
   useEffect(() => {
     if(chatLogRef.current) {
-      // Scroll to the bottom of the chat log when the chat log updates
       chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
     }
   }, [chatLog]);
@@ -234,15 +258,19 @@ const App = () => {
           </div>
         </div>
         <div className="lowerSide">
-          
+          <div className="logout-button" onClick={handleLogout}>
+            Logout
+          </div>
         </div>
       </aside>  
+
       <section className="chatbox">
         <div className="chat-log" ref={chatLogRef}>
           {chatLog.map((message, index) => (
             <ChatMessage key={index} message={message} />
           ))}        
         </div>
+        
         <div className="chat-input-holder">
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             <input
@@ -266,6 +294,7 @@ const App = () => {
             <button onClick={() => handleFileUpload()} className="upload-button">Upload PDF</button>
           </div> 
         </div>
+        
       </section>
     </div>
   ); 
@@ -280,4 +309,4 @@ const ChatMessage = ({ message }) => (
   </div>
 );
 
-export default App;
+export default RootWithRouter;
