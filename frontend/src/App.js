@@ -64,8 +64,8 @@ const App = () => {
   async function handleOpenOldChat(convID) {
     // clear frontend chat
     setChatLog([]);
+    setChatLogInitialized(true);
 
-    console.log("old chat id: ", convID);
     setCurrentConvID(convID); 
 
     // update chat history
@@ -73,7 +73,7 @@ const App = () => {
       const postData = {
         "id": convID
       };
-
+      console.log(chatLog);
       const response = await axios.post("http://localhost:3500/api/initOldChat", postData, {
         headers: {
           "Content-Type": "application/json"
@@ -187,7 +187,7 @@ const App = () => {
   }, [chatLog]);
 
   useEffect(() => {
-    console.log("currentConvID: ", currentConvID);
+    console.log("new currentConvID: ", currentConvID);
   }, [currentConvID]);
   
   return (
