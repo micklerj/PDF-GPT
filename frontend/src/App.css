@@ -32,7 +32,7 @@
 }
 
 .upperSide {
-  height: 80%;
+  height: 87.5%;
 }
 
 .convos {
@@ -66,6 +66,18 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   line-height: 1.5;
+}
+
+.logout-button {
+  padding:12px;
+  border:1px solid white;
+  border-radius:5px;
+  transition:ease 0.25s all;
+  margin-top: 5%;
+}
+
+.logout-button:hover {
+  background-color: rgba(255,255,255,0.1);
 }
 
 .chatbox {
@@ -209,6 +221,7 @@
 }
 
 .avatar {
+  flex-shrink: 0;
   background:white;
   border-radius:50%;
   width:40px;
@@ -227,6 +240,7 @@
 .message {
   padding-left: 40px;
   padding-right: 40px;
+  word-break: break-all;
 }
 
 @keyframes App-logo-spin {
