@@ -3,12 +3,18 @@ const express = require('express');
 const app = express();
 const PORT = process.env.port || 3500; //backend will run on local port 3500
 const mongoose = require('mongoose');
+const connectDB = require('./config/dbConfig')
+const cors = require('cors');
+
+
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/dbConfig');
 
 // Connect to MongoDB
 connectDB();
+app.use(cors());
+app.use("/api", require("./routes/fileRoutes"));
 
 // Middleware for json
 app.use(express.json());
