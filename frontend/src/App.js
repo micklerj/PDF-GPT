@@ -10,13 +10,12 @@ const App = () => {
   const [currentConvID, setCurrentConvID] = useState(null);
   const [currentPdfPath, setCurrentPdfPath] = useState(null);    // pdf path without the extension
   const [currentPdfName, setCurrentPdfName] = useState(null);    // pdf name without the extension
-  // hard-coded for now:
 
   // Make the below an empty array later, so there's no starting messages
   const [chatLog, setChatLog] = useState([
-    { user: "AI", message: "Hey, PDF-GPT here. Upload a pdf file below and start a conversation!"},
+    { user: "AI", message: "Hey, PDF-GPT here. Upload a pdf file below and choose a previous conversation or start a new one!"},
   ]);
-  const [chatHistoryLog, setChatHistoryLog] = useState([]);
+  const [chatHistoryLog, setChatHistoryLog] = useState([]);        // TODO:   when a user logs in, we need to iterate though the user's list of convID's in the users collection and update the chatHistoryLog on the side bar
   const [chatLogInitialized, setChatLogInitialized] = useState(false);
   const chatLogRef = useRef(null);
 
@@ -26,17 +25,14 @@ const App = () => {
       const postData = {
         "pdfPath": currentPdfPath   
       };
-      console.log("test1");
 
       await axios.post("http://localhost:3500/api/vectorize", postData, {
         headers: {
           "Content-Type": "application/json"
         }
       });    
-      console.log("test2");  
     } catch (error) {
       console.error("Error vectorizing pdf file:", error);
-      console.log("test3");
     }
   }
   async function handleCreateNewChat() {
@@ -65,55 +61,39 @@ const App = () => {
   }
 
   // use this when selcecting an old chat
-  async function handleOpenOldChat() {
+  async function handleOpenOldChat(convID) {
     // clear frontend chat
-    setChatLog([]);
-
-    // vectorizePDF for current uploaded pdf file
-    try {
-      const postData = {
-        "pdfPath": currentPdfPath   
-      };
-
-      await axios.post("http://localhost:3500/api/vectorize", postData, {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });      
-    } catch (error) {
-      console.error("Error vectorizing pdf file:", error);
-    }
-
-
-    //TODO:   update current convID
-    //setCurrentConvID(the selected chat's convID); 
-
+    await setChatLog([]);
+    console.log("old chat id: ", convID);
+    setCurrentConvID(convID); 
 
     // update chat history
     try {
-      const putData = {
-        "id": currentConvID
+      const getData = {
+        "id": convID
       };
 
-      const response = await axios.put("http://localhost:3500/api/initOldChat", putData, {
+      const response = await axios.get("http://localhost:3500/api/initOldChat", getData, {
         headers: {
           "Content-Type": "application/json"
         }
       });    
       // display old chat history on frontend
       const QAs = response.data.qaSequence;
+      console.log(QAs);
       QAs.forEach(document => {
         const question = document.question;
         const answer = document.answer;
 
         // add entries to chat log
-        const chatLogNew = [...chatLog, { user: "Human", message: question }];
+        setChatLog([...chatLog, { user: "Human", message: question }, { user: "AI", message: answer }]);
+        /*const chatLogNew = [...chatLog, { user: "Human", message: question }];
         setChatLog(chatLogNew);
         const chatLogNew2 = [...chatLog, { user: "AI", message: answer }];
-        setChatLog(chatLogNew2);
+        setChatLog(chatLogNew2);*/
       });
     } catch (error) {
-      console.error("Error vectorizing pdf file:", error);
+      console.error("Error opening old chat:", error);
     }
 
   }
@@ -167,7 +147,7 @@ const App = () => {
 
     // Setting the convo history                  
     if(!chatLogInitialized) {
-      setChatHistoryLog([{message: input}, ...chatHistoryLog]);
+      setChatHistoryLog([{convID: currentConvID, message: currentPdfName}, ...chatHistoryLog]);   
       setChatLogInitialized(true);
     }
 
@@ -190,14 +170,9 @@ const App = () => {
     setInput("");
   }
 
-  function displayOldConvo() {
-    // Add backend request here and display to frontend
-
-  }
-
   const OldConvo = ({message}) => (
     <div className="chat-history-center">
-      <div className="old-convo-button" onClick={displayOldConvo}>
+      <div className="old-convo-button" onClick={async () => {await handleOpenOldChat(message.convID); handleVectorizePDF();}}>
         <div className="old-convo-message">{message.message}</div>
       </div>
     </div>
