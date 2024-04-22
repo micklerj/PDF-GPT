@@ -72,38 +72,40 @@ const App = () => {
     // TODO:   add the new convID to the current user's list of convID's in the users collection
   }
 
-  // use this when selcecting an old chat
   async function handleOpenOldChat(convID) {
-    console.log("Starting to open old chat with convID:", convID);
+    console.log("ConvID:", convID); // Debugging line to check what convID actually contains
+
+    // Ensure convID is what you expect it to be
+    if (typeof convID !== 'string' && typeof convID !== 'number') {
+        console.error("convID is not a string or number:", convID);
+        return;
+    }
 
     setChatLog([]);
-    setShowChatInput(true);
+    setChatLogInitialized(true);
+    setCurrentConvID(convID); 
 
-    // vectorizePDF for current uploaded pdf file
     try {
-        console.log("Making API call to initialize old chat");
-        const response = await axios.get(`http://localhost:3500/api/initOldChat?id=${convID}`, {
-            headers: {
-                "Content-Type": "application/json"
-            }
+        const postData = { id: convID };
+        console.log("Post Data:", postData); // Debugging line to check postData
+
+        const response = await axios.post("http://localhost:3500/api/initOldChat", postData, {
+            headers: { "Content-Type": "application/json" }
         });
 
-        console.log("API call successful, response data:", response.data);
-        
         const QAs = response.data.qaSequence;
-        let newLog = QAs.map(document => ([
-            { user: "Human", message: document.question },
-            { user: "AI", message: document.answer }
-        ])).flat();
+        const newChatLog = QAs.reduce((acc, document) => {
+            acc.push({ user: "Human", message: document.question });
+            acc.push({ user: "AI", message: document.answer });
+            return acc;
+        }, []);
 
-        console.log("New chat log prepared, setting state:", newLog);
-        setChatLog(newLog);
-        console.log("Chat log state set.");
+        setChatLog(newChatLog);
     } catch (error) {
         console.error("Error opening old chat:", error);
-        console.log("Failed to open old chat:", error.response ? error.response.data : error);
     }
-}
+  }
+
 
 
   function handleFileChange(event) {
@@ -152,7 +154,6 @@ const App = () => {
     e.preventDefault();
     const chatLogNew = [...chatLog, { user: "Human", message: input }];
     setChatLog(chatLogNew);
-    setInput("");
 
     // Setting the convo history                  
     if(!chatLogInitialized) {
@@ -176,23 +177,17 @@ const App = () => {
     } catch (error) {
       console.error("Error submitting chat message:", error);
     }
-    //setInput("");
-  }
-
-  function displayOldConvo() {
-    // Add backend request here and display to frontend
-
+    setInput("");
   }
 
   // Need to change 'displayOldConvo' to 'handleOpenOldChat' once it's ready
-  const OldConvo = ({message}) => (
+  const OldConvo = ({ message }) => (
     <div className="chat-history-center">
-      <div className="old-convo-button" onClick={handleOpenOldChat}>
+      <div className="old-convo-button" onClick={() => handleOpenOldChat(message.convID)}>
         <div className="old-convo-message">{message.message}</div>
       </div>
     </div>
   );
-
   // Handles logout tasks
   const handleLogout = () => {
 

@@ -98,7 +98,7 @@ exports.convo = {
     }
     console.log("id: ", id);
 
-    axios.get('http://localhost:3500/api/getConversation/?convID=' + id)
+    axios.post('http://localhost:3500/api/getConversation/?convID=' + id)
     .then(response => {
 
       // clear local chatHistory
