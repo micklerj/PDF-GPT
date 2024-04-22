@@ -6,7 +6,7 @@ router.post('/vectorize', aiController.vectorizePDF);
 
 router.post('/newChat', aiController.createConvo);
 
-router.get('/initOldChat', aiController.convo.updateHistory);
+router.post('/initOldChat', aiController.convo.updateHistory);
 
 router.post('/userInput', aiController.convo.askQuestion);
 

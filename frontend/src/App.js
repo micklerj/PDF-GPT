@@ -210,7 +210,7 @@ const App = () => {
   }, [chatLog]);
 
   useEffect(() => {
-    console.log("currentConvID: ", currentConvID);
+    console.log("new currentConvID: ", currentConvID);
   }, [currentConvID]);
   
   return (
