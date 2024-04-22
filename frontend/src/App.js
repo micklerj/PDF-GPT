@@ -147,7 +147,7 @@ const App = () => {
 
     // Setting the convo history                  
     if(!chatLogInitialized) {
-      setChatHistoryLog([{convID: currentConvID, message: input}, ...chatHistoryLog]);   // maybe use pdf names instead of the 1st input
+      setChatHistoryLog([{convID: currentConvID, message: currentPdfName}, ...chatHistoryLog]);   
       setChatLogInitialized(true);
     }
 
@@ -168,11 +168,6 @@ const App = () => {
       console.error("Error submitting chat message:", error);
     }
     setInput("");
-  }
-
-  function displayOldConvo() {
-    // Add backend request here and display to frontend
-
   }
 
   const OldConvo = ({message}) => (
