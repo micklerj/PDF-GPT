@@ -62,37 +62,34 @@ const App = () => {
 
   // use this when selcecting an old chat
   async function handleOpenOldChat(convID) {
-    // clear frontend chat
+    console.log("ConvID:", convID); // Debugging line to check what convID actually contains
+
+    // Ensure convID is what you expect it to be
+    if (typeof convID !== 'string' && typeof convID !== 'number') {
+      console.error("convID is not a string or number:", convID);
+      return;
+    }
+
     setChatLog([]);
     setChatLogInitialized(true);
-
     setCurrentConvID(convID); 
 
-    // update chat history
     try {
-      const postData = {
-        "id": convID
-      };
-      console.log(chatLog);
-      const response = await axios.post("http://localhost:3500/api/initOldChat", postData, {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });    
-      // display old chat history on frontend
-      const QAs = response.data.qaSequence;
-      console.log(QAs);
-      QAs.forEach(document => {
-        const question = document.question;
-        const answer = document.answer;
+      const postData = { id: convID };
+      console.log("Post Data:", postData); // Debugging line to check postData
 
-        // add entries to chat log
-        setChatLog([...chatLog, { user: "Human", message: question }, { user: "AI", message: answer }]);
-        /*const chatLogNew = [...chatLog, { user: "Human", message: question }];
-        setChatLog(chatLogNew);
-        const chatLogNew2 = [...chatLog, { user: "AI", message: answer }];
-        setChatLog(chatLogNew2);*/
+      const response = await axios.post("http://localhost:3500/api/initOldChat", postData, {
+        headers: { "Content-Type": "application/json" }
       });
+
+      const QAs = response.data.qaSequence;
+      const newChatLog = QAs.reduce((acc, document) => {
+        acc.push({ user: "Human", message: document.question });
+        acc.push({ user: "AI", message: document.answer });
+        return acc;
+      }, []);
+
+      setChatLog(newChatLog);
     } catch (error) {
       console.error("Error opening old chat:", error);
     }

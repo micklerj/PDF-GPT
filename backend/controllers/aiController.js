@@ -17,7 +17,7 @@ const axios = require('axios');
 
 // vectorize the pdf file into a local vector store
 // param: pdfPath
-exports.vectorizePDF = async(req, res) => {
+vectorizePDF = async(req, res) => {
   const { pdfPath } = req.body;
 
   if(!pdfPath) {
@@ -63,7 +63,7 @@ const genSessionID = async () => {
 // generate a new conversation, return the sessionId
 // param: pdfName
 // response: convID of new convo
-exports.createConvo = async(req, res) => {
+createConvo = async(req, res) => {
   const { pdfName } = req.body;
 
   if(!pdfName ) {
@@ -86,7 +86,7 @@ exports.createConvo = async(req, res) => {
 }
 
 
-exports.convo = {
+convo = {
   chatHistory: [],
 
   // upon switching to a new chat, update local chatHistory with chat history from mongoDB
@@ -103,7 +103,7 @@ exports.convo = {
     .then(response => {
 
       // clear local chatHistory
-      exports.convo.chatHistory = [];
+      convo.chatHistory = [];
 
       // Access the chat history from the response data
       const QAs = response.data.qaSequence;
@@ -112,8 +112,8 @@ exports.convo = {
         const answer = document.answer;
 
         // add entries to chat history
-        exports.convo.chatHistory.push(new HumanMessage(question));
-        exports.convo.chatHistory.push(new AIMessage(answer));
+        convo.chatHistory.push(new HumanMessage(question));
+        convo.chatHistory.push(new AIMessage(answer));
       });
       // return the qaSequence in the response to display on frontend
       res.status(201).json({ qaSequence: QAs });
@@ -182,13 +182,13 @@ exports.convo = {
 
     // get AI response from calling the chain
     const response = await conversationChain.invoke({
-      chat_history: this.chatHistory,
+      chat_history: convo.chatHistory,
       input: user_input,
     });
 
     // add entries to chat history
-    exports.convo.chatHistory.push(new HumanMessage(user_input));
-    exports.convo.chatHistory.push(new AIMessage(response.answer));
+    convo.chatHistory.push(new HumanMessage(user_input));
+    convo.chatHistory.push(new AIMessage(response.answer));
 
     // add entries to database
     const putData = {
@@ -211,4 +211,4 @@ exports.convo = {
 
 
 
-//module.exports = {vectorizePDF, createConvo, convo};
+module.exports = {vectorizePDF, createConvo, convo};
