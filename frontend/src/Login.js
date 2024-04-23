@@ -98,7 +98,7 @@ const Login = () => {
                         Need an account?<br />
                         <span className="line">
                             {/*put router link here*/}
-                            <a href="#">Register</a>
+                            <a href="Register">Register</a>
                         </span>
                     </p>
                 </section>
