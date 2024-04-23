@@ -28,4 +28,4 @@ const handleLogout = async (req, res) => {
     res.sendStatus(204);
 }
 
-module.exports = { handleRefreshToken }
+module.exports = { handleLogout }

@@ -9,7 +9,6 @@ const cors = require('cors');
 
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
-const connectDB = require('./config/dbConfig');
 
 // Connect to MongoDB
 connectDB();
