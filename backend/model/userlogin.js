@@ -4,4 +4,5 @@ const Schema = new mongoose.Schema({
     convos: { type: [String], default: [] }, // Array of conversation IDs, implement later
     password: { type: String, required: true },
 });
+
 module.exports = mongoose.model('User', Schema);
