@@ -29,6 +29,23 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const initializeUserData = async () => {
+      const username = await fetchUsername();
+      if (username) {
+        setCurrentUserName(username);
+        
+        // add previous chats to side bar
+        handleInitializeSideBar(username);
+      } else {
+        console.error("Failed to fetch user details or user is not logged in");
+        navigate('/login'); // Redirect to login page if username is not fetched
+      }
+    };
+
+    initializeUserData();    
+  }, []);
+
   async function handleVectorizePDF() {
     // vectorizePDF for current uploaded file
     try {
@@ -105,21 +122,34 @@ const App = () => {
     }
   }
 
-
+  const fetchUsername = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error("No token found in local storage.");
+            return null;
+        }
+        const response = await axios.get('http://localhost:3500/api/getUserName', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data.username;
+    } catch (error) {
+        console.error('Error fetching username:', error.response ? error.response.data : error);
+    }
+  }
 
   function handleFileChange(event) {
     setSelectedFile(event.target.files[0]);
 
     // TODO:     Add message like "File: 'filename' selected" somewhere
   }
-
   async function handleFileUpload() {
     if (!selectedFile) {
       alert("Please select a file first!");
       return;
     }
-
-    setCurrentUserName("joseph"); // remove this 
 
     const formData = new FormData();
     formData.append("userId", currentUserName);  
@@ -189,10 +219,10 @@ const App = () => {
     setInput("");
   }
 
-  async function handleInitializeSideBar() {
+  async function handleInitializeSideBar(username) {
     setChatHistoryLog([]);
 
-    axios.get('http://localhost:3500/api/getUser/?username=' + "joseph")
+    axios.get('http://localhost:3500/api/getUser/?username=' + username)
     .then(response => {
 
       // Access the user's previous conversations from the response data
@@ -240,9 +270,9 @@ const App = () => {
     console.log("new currentConvID: ", currentConvID);
   }, [currentConvID]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     handleInitializeSideBar();
-  }, []);
+  }, []);*/
   
   return (
     <div className="App">
