@@ -6,6 +6,7 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
+    width: 100vw;
   }
   
 .register-page h1 {
@@ -64,6 +65,7 @@
   .input-requirements {
     margin-top: 0px;
     margin-bottom: 20px;
+    text-align: left;
   }
   
   .line a {

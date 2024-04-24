@@ -176,9 +176,8 @@ const Register = () => {
                     <p>
                         Already registered?
                         <span className="line">
-                            {/*put router link here*/}
+                            {/* put router link here */}
                             <a href="Login"> Sign In</a>
-                            
                         </span>
                     </p>
                 </section>
@@ -188,3 +187,5 @@ const Register = () => {
 }
 
 export default Register;
+
+  /* Might need to style the page for when Register is successful */

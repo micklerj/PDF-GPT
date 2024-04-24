@@ -1,31 +1,28 @@
 .login-page {
     background-color:#282c34;
     color:white;
-    height: 100vh;
+    display:flex;
+    width: 100vw;
 }
 
-/*
 .login-section-parent {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    
-    
+    width: 100vw;
 }
-*/
 
 .login-section {
     display: flex;
     flex-direction: column;
-    
+    align-items: center;
     justify-content: center;
-    text-align: center;
     width: 100%;
 }
 
 .register-section {
-    height: 20vh;
+    height: 20vh; 
 }
 
   .errmsg {
@@ -35,7 +32,7 @@
   
   .login-form {
     width: 300px; 
-    
+    text-align: left;
   }
   
   /* May need to add a class or something and change title here */

@@ -71,7 +71,7 @@ const Login = () => {
                     </p>
                 </section>
             ) : (
-                <section>
+                <section className="login-section-parent">
                     <div className="login-section">
                         <p ref={errRef} className={errMsg ? "errmsg" :
                             "offscreen"} aria-live="assertive">{errMsg}</p>
@@ -118,3 +118,5 @@ const Login = () => {
 }
 
 export default Login;
+
+/* Might need to style the page for when Login is successful */
