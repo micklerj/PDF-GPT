@@ -1,0 +1,62 @@
+.login-page {
+    background-color:#282c34;
+    color:white;
+}
+
+.login-section-parent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    height: 100vh; 
+}
+
+.login-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.register-section {
+    height: 20vh;
+}
+
+  .errmsg {
+    color: red;
+    margin-bottom: 10px;
+  }
+  
+  .login-form {
+    width: 300px; 
+    
+  }
+  
+  /* May need to add a class or something and change title here */
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .login-button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #61dafb; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .line a {
+    color: #61dafb; 
+    text-decoration: none;
+  }
+  

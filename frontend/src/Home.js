@@ -44,6 +44,7 @@ const App = () => {
       console.error("Error vectorizing pdf file:", error);
     }
   }
+
   async function handleCreateNewChat() {
     // clear chat
     setChatLog([]);
@@ -158,6 +159,7 @@ const App = () => {
       setChatHistoryLog([{convID: currentConvID, message: currentPdfName}, ...chatHistoryLog]);   
       setChatLogInitialized(true);
     }
+    setInput(""); // So input message disappears immediately
 
     try {
       const postData = {
@@ -175,10 +177,9 @@ const App = () => {
     } catch (error) {
       console.error("Error submitting chat message:", error);
     }
-    setInput("");
+    //setInput(""); // Commented out bc for input message to clear it has to wait for post request to finish
   }
 
-  // Need to change 'displayOldConvo' to 'handleOpenOldChat' once it's ready
   const OldConvo = ({ message }) => (
     <div className="chat-history-center">
       <div className="old-convo-button" onClick={() => handleOpenOldChat(message.convID)}>
@@ -186,6 +187,7 @@ const App = () => {
       </div>
     </div>
   );
+
   // Handles logout tasks
   const handleLogout = () => {
 
