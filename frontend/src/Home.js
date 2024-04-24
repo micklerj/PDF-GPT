@@ -18,8 +18,10 @@ const App = () => {
   const [currentPdfName, setCurrentPdfName] = useState(null);    // pdf name without the extension
 
   // Make the below an empty array later, so there's no starting messages
-  const [chatLog, setChatLog] = useState([]);
-  const [chatHistoryLog, setChatHistoryLog] = useState([]);
+  const [chatLog, setChatLog] = useState([
+    { user: "AI", message: "Hey, PDF-GPT here. Upload a pdf file below and choose a previous conversation or start a new one!"},
+  ]);
+  const [chatHistoryLog, setChatHistoryLog] = useState([]);        // TODO:   when a user logs in, we need to iterate though the user's list of convID's in the users collection and update the chatHistoryLog on the side bar
   const [chatLogInitialized, setChatLogInitialized] = useState(false);
   const [showChatInput, setShowChatInput] = useState(false);
   const chatLogRef = useRef(null);
@@ -181,7 +183,7 @@ const App = () => {
   // Need to change 'displayOldConvo' to 'handleOpenOldChat' once it's ready
   const OldConvo = ({ message }) => (
     <div className="chat-history-center">
-      <div className="old-convo-button" onClick={() => handleOpenOldChat(message.convID)}>
+      <div className="old-convo-button" onClick={async () => {await handleOpenOldChat(message.convID); handleVectorizePDF();}}>
         <div className="old-convo-message">{message.message}</div>
       </div>
     </div>
