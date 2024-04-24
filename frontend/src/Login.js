@@ -39,6 +39,7 @@ const Login = () => {
 
             const accessToken = response?.data?.accessToken;
             const convos = response?.data?.convos; // Array of conversation objects, implement later
+            localStorage.setItem('token', accessToken); 
             setAuth({ user, pwd, accessToken, convos });
             setUser('');
             setPwd('');

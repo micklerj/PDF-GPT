@@ -31,21 +31,18 @@ const handleLogin = async (req, res) => {
 }
 
 const getUserName = async (req, res) => {
-    try {
-        const { username } = req.body;
-        if (!username) {
-            return res.sendStatus(400);
-        }
-        const user = await users.findOne({ username: username }).exec();
-        if (!user) {
-            return res.sendStatus(401);
-        }
-        res.json({ username: user.username });
-    } catch (err) {
-        console.error(err);
-        res.sendStatus(500).json({ message: 'Server error' });
+    const token = req.headers['authorization']?.split(' ')[1]; // Bearer token
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided.' });
     }
-}
+
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        return res.json({ username: decoded.username });
+    } catch (error) {
+        return res.status(403).json({ message: 'Invalid token.' });
+    }
+};
 
 
 

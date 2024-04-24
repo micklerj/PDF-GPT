@@ -19,6 +19,7 @@
   border-radius:5px;
   text-align: left; 
   transition:ease 0.25s all;
+  cursor: pointer;
 }
 
 .side-menu-button span {
@@ -74,6 +75,7 @@
   border-radius:5px;
   transition:ease 0.25s all;
   margin-top: 5%;
+  cursor: pointer;
 }
 
 .logout-button:hover {
