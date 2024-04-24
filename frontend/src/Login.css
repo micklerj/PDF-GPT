@@ -1,23 +1,27 @@
 .login-page {
     background-color:#282c34;
     color:white;
+    height: 100vh;
 }
 
+/*
 .login-section-parent {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     
-    height: 100vh; 
+    
 }
+*/
 
 .login-section {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     
+    justify-content: center;
+    text-align: center;
+    width: 100%;
 }
 
 .register-section {

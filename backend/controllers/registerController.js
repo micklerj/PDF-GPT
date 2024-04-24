@@ -8,14 +8,14 @@ const handleNewUser = async (req, res) => {
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and Password are required.' });
     }
-    const duplicate = await users.findOne({ username: user }).exec();
+    const duplicate = await users.findOne({ username: username }).exec();
     if (duplicate) {
         return res.sendStatus(409);
     }
     try {
         const hashword = await bcrypt.hash(password, 10);
         const result = await users.create({
-            "username": user,
+            "username": username,
             "password": hashword
         });
 

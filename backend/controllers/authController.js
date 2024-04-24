@@ -9,7 +9,7 @@ const handleLogin = async (req, res) => {
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and Password are required.' });
     }
-    const user = await users.findOne({ username: user }).exec();
+    const user = await users.findOne({ username: username }).exec();
     if (!user) {
         return res.sendStatus(401);
     }
@@ -30,4 +30,23 @@ const handleLogin = async (req, res) => {
     }
 }
 
-module.exports = { handleLogin }
+const getUserName = async (req, res) => {
+    try {
+        const { username } = req.body;
+        if (!username) {
+            return res.sendStatus(400);
+        }
+        const user = await users.findOne({ username: username }).exec();
+        if (!user) {
+            return res.sendStatus(401);
+        }
+        res.json({ username: user.username });
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500).json({ message: 'Server error' });
+    }
+}
+
+
+
+module.exports = { handleLogin, getUserName }

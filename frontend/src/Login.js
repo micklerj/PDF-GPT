@@ -1,15 +1,16 @@
-
+import { Link, useNavigate } from 'react-router-dom'; 
 import { useRef, useState, useEffect, useContext } from 'react';
 import AuthContext from './context/AuthProvider';
 import './normal.css';
 import './Login.css';
 import axios from './api/axios';
-const LOGIN_URL = './authRoute';
+const LOGIN_URL = 'http://localhost:3500/api/login';
 
 const Login = () => {
     const { setAuth } = useContext(AuthContext);
     const userRef = useRef();
     const errRef = useRef();
+    const navigate = useNavigate();
 
     const [user, setUser] = useState('');
     const [pwd, setPwd] = useState('');
@@ -30,7 +31,7 @@ const Login = () => {
 
         try {
             const response = await axios.post(LOGIN_URL,
-                JSON.stringify({ user, pwd }),
+                JSON.stringify({ username: user, password: pwd }),
                 { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
             );
 
@@ -42,6 +43,8 @@ const Login = () => {
             setUser('');
             setPwd('');
             setSuccess(true);
+            //take me home
+            navigate('/');
         } catch (err) {
             if (!err?.response) {
                 setErrMsg('No Server Response');
@@ -63,11 +66,11 @@ const Login = () => {
                     <h1>You are logged in!</h1>
                     <br />
                     <p>
-                        <a href="#">Go to Home</a>
+                        <Link to="/">Go to Home</Link>
                     </p>
                 </section>
             ) : (
-                <section className="login-section-parent">
+                <section>
                     <div className="login-section">
                         <p ref={errRef} className={errMsg ? "errmsg" :
                             "offscreen"} aria-live="assertive">{errMsg}</p>
