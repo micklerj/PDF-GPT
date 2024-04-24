@@ -61,7 +61,7 @@ const Login = () => {
     }
 
     return (
-        <>
+        <section className="login-page">
             {success ? (
                 <section>
                     <h1>You are logged in!</h1>
@@ -71,44 +71,52 @@ const Login = () => {
                     </p>
                 </section>
             ) : (
-                <section>
-                    <p ref={errRef} className={errMsg ? "errmsg" :
-                        "offscreen"} aria-live="assertive">{errMsg}</p>
-                    <h1> Login </h1>
-                    <form onSubmit={handleSubmit}>
-                        <label htmlFor="username">Username:</label>
-                        <input
-                            type="text"
-                            id="username"
-                            ref={userRef}
-                            autoComplete="off"
-                            onChange={(e) => setUser(e.target.value)}
-                            value={user}
-                            required
-                        />
+                <section className="login-section-parent">
+                    <div className="login-section">
+                        <p ref={errRef} className={errMsg ? "errmsg" :
+                            "offscreen"} aria-live="assertive">{errMsg}</p>
+                        <h1> Welcome to PDF-GPT </h1>
+                        <h2> Login </h2>
+                        <form className="login-form" onSubmit={handleSubmit}>
+                            <label htmlFor="username">Username:</label>
+                            <input
+                                type="text"
+                                id="username"
+                                ref={userRef}
+                                autoComplete="off"
+                                onChange={(e) => setUser(e.target.value)}
+                                value={user}
+                                required
+                            />
 
-                        <label htmlFor="password">Password:</label>
-                        <input
-                            type="password"
-                            id="password"
-                            ref={userRef}
-                            onChange={(e) => setPwd(e.target.value)}
-                            value={pwd}
-                            required
-                        />
-                        <button> Log In</button>
-                    </form>
-                    <p>
-                        Need an account?<br />
-                        <span className="line">
-                            {/*put router link here*/}
-                            <a href="Register">Register</a>
-                        </span>
-                    </p>
+                            <label htmlFor="password">Password:</label>
+                            <input
+                                type="password"
+                                id="password"
+                                ref={userRef}
+                                onChange={(e) => setPwd(e.target.value)}
+                                value={pwd}
+                                required
+                            />
+                            <button className="login-button"> Log In</button>
+                        </form>
+                    </div>
+                    <div className="register-section">
+                        <p>
+                            Need an account? 
+                            <span className="line">
+                                {/*put router link here*/}
+                                <a href="Register"> Register</a>
+                            </span>
+                        </p>
+                    </div>
                 </section>
+                
             )}
-        </>
+        </section>
     );
 }
 
 export default Login;
+
+/* Might need to style the page for when Login is successful */

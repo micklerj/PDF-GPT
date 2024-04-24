@@ -92,7 +92,7 @@ const Register = () => {
     }
 
     return (
-        <>
+        <section className="register-page">
             {success ? (
                 <section>
                     <h1>Success!</h1>
@@ -104,8 +104,9 @@ const Register = () => {
                 <section>
                     <p ref={errRef} className={errMsg ? "errmsg" :
                         "offscreen"} aria-live="assertive">{errMsg}</p>
-                    <h1>Register</h1>
-                    <form onSubmit={handleSubmit}>
+                    <h1 className="register-title">Register</h1>
+                    <form className="register-form" onSubmit={handleSubmit}>
+                        
                         <label htmlFor="username">
                             Username:
                         </label>
@@ -121,10 +122,12 @@ const Register = () => {
                             onFocus={() => setUserFocus(true)}
                             onBlur={() => setUserFocus(false)}
                         />
-                        <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
-                            Username must be 4-24 characters long and start with a letter. <br />
-                            Letters, numbers, hyphens, and underscores are allowed. <br />
-                        </p>
+                        <div className="input-requirements">
+                            <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
+                                Username must be 4-24 characters long and start with a letter. <br />
+                                Letters, numbers, hyphens, and underscores are allowed. <br />
+                            </p>
+                        </div>
 
                         <label htmlFor="password">
                             Password:
@@ -140,11 +143,13 @@ const Register = () => {
                             onFocus={() => setPwdFocus(true)}
                             onBlur={() => setPwdFocus(false)}
                         />
-                        <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
-                            Password must be 8-24 characters. <br />
-                            Password must include uppercase and lowercase letters, a number and a special character.<br />
-                            Allowed special characters: <span aria-label="exclamation mark">!</span> <span aria-label="at symbol">@</span> <span aria-label="hashtag">#</span> <span aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
-                        </p>
+                        <div className="input-requirements">
+                            <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
+                                Password must be 8-24 characters. <br />
+                                Password must include uppercase and lowercase letters, a number and a special character.<br />
+                                Allowed special characters: <span aria-label="exclamation mark">!</span> <span aria-label="at symbol">@</span> <span aria-label="hashtag">#</span> <span aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
+                            </p>
+                        </div>
 
                         <label htmlFor="confirm_pwd">
                             Confirm Password:
@@ -160,22 +165,27 @@ const Register = () => {
                             onFocus={() => setMatchFocus(true)}
                             onBlur={() => setMatchFocus(false)}
                         />
-                        <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
-                            Must match the first password input field.
-                        </p>
+                        <div className="input-requirements">
+                            <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
+                                Must match the first password input field.
+                            </p>
+                        </div>
 
                         <button disabled={!validName || !validPwd || !validMatch ? true : false}>Register</button>
                     </form>
                     <p>
-                        Already registered?<br />
+                        Already registered?
                         <span className="line">
-                            <a href="Login">Sign In</a>
+                            {/* put router link here */}
+                            <a href="Login"> Sign In</a>
                         </span>
                     </p>
                 </section>
             )}
-        </>
+        </section>
     )
 }
 
 export default Register;
+
+  /* Might need to style the page for when Register is successful */
