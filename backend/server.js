@@ -12,7 +12,11 @@ const cookieParser = require('cookie-parser');
 
 // Connect to MongoDB
 connectDB();
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true,  
+};
+app.use(cors(corsOptions));
 app.use("/api", require("./routes/fileRoutes"));
 
 // Middleware for json
@@ -22,14 +26,15 @@ app.use(express.json());
 app.use(cookieParser());
 
 //routes for conversation
-app.use("/api", require("./routes/conversationRoute"))
+app.use("/api", require("./routes/conversationRoute"));
+app.use("/api", require("./routes/aiRoutes"))
 
 //routes for register, login, refersh, and logout
-app.use('/register', require('./routes/registerRoute'));
-app.use('/auth', require('./routes/authRoute'));
-app.use('/refresh', require('./routes/refreshRoute'));
-app.use('/logout', require('./routes/logoutRoute'));
-app.use(verifyJWT);
+app.use('/api', require('./routes/registerRoute'));
+
+app.use('/api', require('./routes/authRoute'));
+app.use('/api', require('./routes/refreshRoute'));
+app.use('/api', require('./routes/logoutRoute'));
 
 
 mongoose.connection.once('open', () => {
