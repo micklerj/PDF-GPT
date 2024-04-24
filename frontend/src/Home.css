@@ -1,0 +1,253 @@
+.App {
+  text-align: center;
+  display:flex;
+  background-color: #282c34;
+  color:white;
+  position:absolute;
+  top:0;bottom:0;right:0;left:0;
+}
+
+.sidemenu {
+  width:260px;
+  padding:10px;
+  background-color:#202123;
+}
+
+.side-menu-button {
+  padding:12px;
+  border:1px solid white;
+  border-radius:5px;
+  text-align: left; 
+  transition:ease 0.25s all;
+}
+
+.side-menu-button span {
+  padding-left:6px;
+  padding-right:12px;
+}
+
+/* The 0.1 is 10% opacity */
+.side-menu-button:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+.upperSide {
+  height: 87.5%;
+}
+
+.convos {
+  overflow: auto;
+  border-bottom: 1px solid rgb(255, 255, 255);
+  height: 80%;
+}
+
+.chat-history-divider {
+  border-top: 1px solid white;
+  margin-bottom: 0px; 
+  margin-top: 25px; 
+}
+
+.old-convo-button {
+  padding:12px;
+  margin-top:0px;
+  border-radius:5px;
+  text-align: left; 
+  transition:ease 0.25s all;
+  cursor:pointer;
+  
+}
+
+.old-convo-button:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+.old-convo-message {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+}
+
+.logout-button {
+  padding:12px;
+  border:1px solid white;
+  border-radius:5px;
+  transition:ease 0.25s all;
+  margin-top: 5%;
+}
+
+.logout-button:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+.chatbox {
+  flex:1;
+  background-color: #343541;
+  position:relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.chat-input-holder {
+  position: absolute;
+  bottom: 0; 
+  left: 0;
+  right: 0;
+  display: flex;
+  padding: 10px 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.chat-input-textArea {
+  flex-grow: 1; 
+  margin-right: 10px; 
+  padding: 8px 12px;
+  background-color: #40414f;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 1em;
+  outline: none;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.25);
+  width: 75%
+}
+
+.send-button {
+  padding: 8px 16px;
+  background-color: #61dafb;
+  color: white;
+  font-size: 1em;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+}
+
+.send-button:hover {
+  background-color: #55c0e9;
+}
+
+.file-input-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-input-label {
+  padding: 8px 16px;
+  background-color: #61dafb;
+  color: white;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.25s;
+}
+
+.file-input-label:hover {
+  background-color: #55c0e9;
+}
+
+.upload-button {
+  padding: 8px 16px;
+  margin-left: 10px;
+  background-color: #4CAF50; 
+  color: white;
+  font-size: 1em;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+}
+
+.upload-button:hover {
+  background-color: #45a049;
+}
+
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.chat-log {
+  text-align:left;
+  overflow: auto; 
+  padding: 20px;
+  height: 87.5%
+}
+
+.chat-message.chatbot {
+  background-color: #444654;
+}
+
+.chat-message-center {
+  max-width:640px;
+  margin-left:auto;
+  margin-right:auto;
+  display:flex;
+  padding:12px;
+  padding-left: 24px;
+  padding-right: 24px; 
+}
+
+.avatar {
+  flex-shrink: 0;
+  background:white;
+  border-radius:50%;
+  width:40px;
+  height:40px;
+
+}
+
+.avatar.chatbot {
+  background:#61dbfb;
+  border-radius:50%;
+  width:40px;
+  height:40px;
+
+}
+
+.message {
+  padding-left: 40px;
+  padding-right: 40px;
+  word-break: break-all;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

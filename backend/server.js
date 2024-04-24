@@ -5,79 +5,39 @@ const PORT = process.env.port || 3500; //backend will run on local port 3500
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConfig')
 const cors = require('cors');
-const bodyParser = require('body-parser');
-
-const {vectorizePDF, createConvo, convo} = require('./openAIInterface');
-const readline = require('readline');
 
 
+const verifyJWT = require('./middleware/verifyJWT');
+const cookieParser = require('cookie-parser');
+
+// Connect to MongoDB
 connectDB();
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true,  
+};
+app.use(cors(corsOptions));
+app.use("/api", require("./routes/fileRoutes"));
 
+// Middleware for json
 app.use(express.json());
-app.use(cors());
-app.use(bodyParser.json());
-app.use("/api", require("./routes/conversationRoute"))
 
-// name of the pdf file (minus ".pdf") being used  ,   needs to be updated if a different pdf file is uploaded
-const pdfName = "murder_mystery_show";
-const pdfPath = "PDFs/" + pdfName;
+// Middleware for cookies
+app.use(cookieParser());
 
-// conversation ID for the current chat being used  ,  needs to be updated when you switch to a different conversation
-let id = '661d377d39214f37e74b6a26';
+//routes for conversation
+app.use("/api", require("./routes/conversationRoute"));
+app.use("/api", require("./routes/aiRoutes"))
 
-// API endpoint for recieving user input
-app.post("/userInput", async (req,res) => {
-  const {input} = req.body;
+//routes for register, login, refersh, and logout
+app.use('/api', require('./routes/registerRoute'));
 
-  const AIresponse = await convo.askQuestion(id, pdfPath, `${input}`);    // this handles updating the batabase too
-
-  res.json({
-    message: AIresponse
-  });
-});
+app.use('/api', require('./routes/authRoute'));
+app.use('/api', require('./routes/refreshRoute'));
+app.use('/api', require('./routes/logoutRoute'));
 
 
 mongoose.connection.once('open', () => {
   console.log("connected to MongoDB");
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 })
-
-
-
-
-
-
-
-
-// sample conversation in the terminal:
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-rl.on('line', async (input) => {
-
-  // vectorize pdf file
-  if (input == 'vector') {
-    vectorizePDF(pdfPath);
-  }
-
-  // create new conversation in the database and use its id
-  else if (input == 'new') {
-    id = await createConvo(pdfName);
-    console.log(id);
-  }
-
-  // update local chat history
-  else if (input == 'update') {
-    await convo.updateHistory(id);
-  }
-
-  // chat with the conversation cooresponding to previous id
-  else {
-    console.log("AI response:");
-    const AImessage = await convo.askQuestion(id, pdfPath, input);
-    console.log(AImessage);
-  }
-  console.log("---------------------------------");
-  
-});

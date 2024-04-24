@@ -1,6 +1,6 @@
 const Conversation = require("../model/conversation");
 
-const fetchConversation = async (req, res) => {
+exports.fetchConversation = async (req, res) => {
   try {
     const convID = req.query.convID;
     if (!convID) {
@@ -17,8 +17,7 @@ const fetchConversation = async (req, res) => {
   }
 };
 
-
-const newConversation = async(req, res) => {
+exports.newConversation = async(req, res) => {
   try {
     const { convID, pdfName, qaSequence } = req.body;
 
@@ -38,7 +37,7 @@ const newConversation = async(req, res) => {
   }
 }
 
-const addQA = async(req, res) => {
+exports.addQA = async(req, res) => {
   try {
     const { convID } = req.params;
     const { question, answer } = req.body;
@@ -59,5 +58,3 @@ const addQA = async(req, res) => {
     console.error(err);
   }
 }
-
-module.exports = { fetchConversation, newConversation, addQA }
