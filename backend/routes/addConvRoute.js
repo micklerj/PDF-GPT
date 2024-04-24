@@ -4,6 +4,6 @@ const addConvController = require('../controllers/addConvController');
 
 router.put('/addConv/:username', addConvController.addConv);
 
-router.get('/getUserConvos', addConvController.fetchUser);
+router.get('/getUser', addConvController.fetchUser);
 
 module.exports = router;

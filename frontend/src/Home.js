@@ -20,7 +20,7 @@ const App = () => {
   const [chatLog, setChatLog] = useState([
     { user: "AI", message: "Hey, PDF-GPT here. Upload a pdf file below and choose a previous conversation or start a new one!"},
   ]);
-  const [chatHistoryLog, setChatHistoryLog] = useState([]);        // TODO:   when a user logs in, we need to iterate though the user's list of convID's in the users collection and update the chatHistoryLog on the side bar
+  const [chatHistoryLog, setChatHistoryLog] = useState([]);        
   const [chatLogInitialized, setChatLogInitialized] = useState(false);
   const [showChatInput, setShowChatInput] = useState(false);
   const chatLogRef = useRef(null);
@@ -119,7 +119,7 @@ const App = () => {
       return;
     }
 
-    setCurrentUserName("user123"); // remove this 
+    setCurrentUserName("joseph"); // remove this 
 
     const formData = new FormData();
     formData.append("userId", currentUserName);  
@@ -161,7 +161,8 @@ const App = () => {
 
       // add the new convID to the current user's list of convID's 
       const putData = {
-        "convID": currentConvID
+        "convID": currentConvID,
+        "pdfName": currentPdfName
       };
       axios.put('http://localhost:3500/api/addConv/' + currentUserName, putData)
         .catch(error => {
@@ -191,22 +192,20 @@ const App = () => {
   async function handleInitializeSideBar() {
     setChatHistoryLog([]);
 
-    axios.get('http://localhost:3500/api/getUserConvos/?username=' + currentUserName)
+    axios.get('http://localhost:3500/api/getUser/?username=' + "joseph")
     .then(response => {
 
       // Access the user's previous conversations from the response data
       const convos = response.data.convos;
-      convos.forEach(id => {
-        // TODO   get name of pdf file cooresponding to the conversation with convID = id
-        const pdfName = "pdf name";
 
-        // add convo to side bar
-        const chatHistoryLogNew = [{convID: id, message: pdfName}, ...chatHistoryLog];
-        setChatHistoryLog(chatHistoryLogNew);
-      });
+      const chatHistoryLogNew = convos.reduce((acc, document) => {
+        acc.unshift({convID: document.convID, message: document.pdfName});
+        return acc;
+    }, []);
 
-      // return the qaSequence in the response to display on frontend
-      res.status(201).json({ prevConvos: convos });
+    setChatHistoryLog(chatHistoryLogNew);
+
+      //res.status(201).json({ prevConvos: convos });
     })
       .catch(error => {
         console.error('Error:', error);
@@ -240,6 +239,10 @@ const App = () => {
   useEffect(() => {
     console.log("new currentConvID: ", currentConvID);
   }, [currentConvID]);
+
+  useEffect(() => {
+    handleInitializeSideBar();
+  }, []);
   
   return (
     <div className="App">

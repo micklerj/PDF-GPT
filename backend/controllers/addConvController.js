@@ -3,9 +3,9 @@ const User = require("../model/userlogin");
 exports.addConv = async(req, res) => {
   try {
     const { username } = req.params;
-    const { convID } = req.body;
+    const { convID, pdfName } = req.body;
   
-    if (!convID || !username) {
+    if (!convID || !username || !pdfName) {
       return res.status(400).json({ message: 'Missing required fields.'});
     }
     const user = await User.findOne({ username });
@@ -13,7 +13,7 @@ exports.addConv = async(req, res) => {
     if(!user) {
       return res.status(404).json({ message: 'user not found.'});
     }
-    user.convos.push(convID);
+    user.convos.push({convID, pdfName});
 
     await user.save();
     res.status(200).json(user);
