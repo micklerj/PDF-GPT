@@ -29,12 +29,13 @@ app.use(cookieParser());
 app.use("/api", require("./routes/conversationRoute"));
 app.use("/api", require("./routes/aiRoutes"))
 
-//routes for register, login, refersh, and logout
+//routes for register, login, refersh, and logout   and adding convID to user's convID list
 app.use('/api', require('./routes/registerRoute'));
 
 app.use('/api', require('./routes/authRoute'));
 app.use('/api', require('./routes/refreshRoute'));
 app.use('/api', require('./routes/logoutRoute'));
+app.use('/api', require('./routes/addConvRoute'));
 
 
 mongoose.connection.once('open', () => {

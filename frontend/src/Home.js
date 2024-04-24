@@ -12,12 +12,11 @@ const RootWithRouter = () => (
 const App = () => {
   const [input, setInput] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
-  const [currentUserID, setCurrentUserID] = useState(null);
+  const [currentUserName, setCurrentUserName] = useState(null);
   const [currentConvID, setCurrentConvID] = useState(null);
   const [currentPdfPath, setCurrentPdfPath] = useState(null);    // pdf path without the extension
   const [currentPdfName, setCurrentPdfName] = useState(null);    // pdf name without the extension
 
-  // Make the below an empty array later, so there's no starting messages
   const [chatLog, setChatLog] = useState([
     { user: "AI", message: "Hey, PDF-GPT here. Upload a pdf file below and choose a previous conversation or start a new one!"},
   ]);
@@ -69,7 +68,6 @@ const App = () => {
       console.error("Error creating new convo:", error);
     }
 
-    // TODO:   add the new convID to the current user's list of convID's in the users collection
   }
 
   async function handleOpenOldChat(convID) {
@@ -84,6 +82,7 @@ const App = () => {
     setChatLog([]);
     setChatLogInitialized(true);
     setCurrentConvID(convID); 
+    setShowChatInput(true);
 
     try {
         const postData = { id: convID };
@@ -120,10 +119,10 @@ const App = () => {
       return;
     }
 
-    setCurrentUserID("user123");
+    setCurrentUserName("user123"); // remove this 
 
     const formData = new FormData();
-    formData.append("userId", currentUserID);  
+    formData.append("userId", currentUserName);  
     formData.append("conversationId", currentConvID);
     //file must be last to ensure JSON data gets parsed correctly
     formData.append("file", selectedFile);
@@ -141,7 +140,7 @@ const App = () => {
       // update current pdf file path and name 
       const fileName = selectedFile.name;
       const fileNameNoExtension = fileName.substring(0, fileName.lastIndexOf('.'));
-      await setCurrentPdfPath(`pdf-uploads/${currentUserID}/${fileNameNoExtension}`);
+      await setCurrentPdfPath(`pdf-uploads/${currentUserName}/${fileNameNoExtension}`);
       await setCurrentPdfName(`${fileNameNoExtension}`);
 
     } catch (error) {
@@ -159,6 +158,15 @@ const App = () => {
     if(!chatLogInitialized) {
       setChatHistoryLog([{convID: currentConvID, message: currentPdfName}, ...chatHistoryLog]);   
       setChatLogInitialized(true);
+
+      // add the new convID to the current user's list of convID's 
+      const putData = {
+        "convID": currentConvID
+      };
+      axios.put('http://localhost:3500/api/addConv/' + currentUserName, putData)
+        .catch(error => {
+          console.error('Error adding convID:', error);
+        }); 
     }
 
     try {
@@ -178,6 +186,31 @@ const App = () => {
       console.error("Error submitting chat message:", error);
     }
     setInput("");
+  }
+
+  async function handleInitializeSideBar() {
+    setChatHistoryLog([]);
+
+    axios.get('http://localhost:3500/api/getUserConvos/?username=' + currentUserName)
+    .then(response => {
+
+      // Access the user's previous conversations from the response data
+      const convos = response.data.convos;
+      convos.forEach(id => {
+        // TODO   get name of pdf file cooresponding to the conversation with convID = id
+        const pdfName = "pdf name";
+
+        // add convo to side bar
+        const chatHistoryLogNew = [{convID: id, message: pdfName}, ...chatHistoryLog];
+        setChatHistoryLog(chatHistoryLogNew);
+      });
+
+      // return the qaSequence in the response to display on frontend
+      res.status(201).json({ prevConvos: convos });
+    })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   }
 
   // Need to change 'displayOldConvo' to 'handleOpenOldChat' once it's ready
@@ -242,16 +275,18 @@ const App = () => {
         </div>
         
         <div className="chat-input-holder">
-          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-            <input
-                rows="1"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                className="chat-input-textArea"
-                placeholder="Chat with PDF-GPT"
-            />
-            <button type="submit" className="send-button">Send</button>
-          </form>
+          {showChatInput && (
+            <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+              <input
+                  rows="1"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  className="chat-input-textArea"
+                  placeholder="Chat with PDF-GPT"
+              />
+              <button type="submit" className="send-button">Send</button>
+            </form>
+          )}
           <div className="file-input-container">
             <input
               type="file"
