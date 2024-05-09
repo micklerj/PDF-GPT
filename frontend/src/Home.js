@@ -43,7 +43,7 @@ const App = () => {
     };
 
     initializeUserData();    
-  }, []);
+  }, [navigate]);
 
   async function handleVectorizePDF() {
     // vectorizePDF for current uploaded file
