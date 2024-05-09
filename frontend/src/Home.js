@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
+//import { BrowserRouter as Router } from 'react-router-dom';
 import axios from "axios";
 import './normal.css';
 import './Home.css';
@@ -26,7 +26,6 @@ const App = () => {
   const chatLogRef = useRef(null);
 
   // Login/logout stuff
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -255,7 +254,6 @@ const App = () => {
 
     // TODO: Clear user authentication tokens or session data here
 
-    setIsLoggedIn(false);
     navigate('/login');
   };
 
@@ -269,10 +267,6 @@ const App = () => {
   useEffect(() => {
     console.log("new currentConvID: ", currentConvID);
   }, [currentConvID]);
-
-  /*useEffect(() => {
-    handleInitializeSideBar();
-  }, []);*/
   
   return (
     <div className="App">
