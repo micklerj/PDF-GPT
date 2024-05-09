@@ -77,7 +77,7 @@ createConvo = async(req, res) => {
     "qaSequence": []
   };
   
-  await axios.post('http://localhost:3500/api/createConversation', postData)
+  await axios.post('https://pdf-gpt-aycf.onrender.com/api/createConversation', postData)
     .catch(error => {
       console.error('Error:', error);
     });
@@ -99,7 +99,7 @@ convo = {
     }
     console.log("id: ", id);
 
-    axios.get('http://localhost:3500/api/getConversation/?convID=' + id)
+    axios.get('https://pdf-gpt-aycf.onrender.com/api/getConversation/?convID=' + id)
     .then(response => {
 
       // clear local chatHistory
@@ -195,7 +195,7 @@ convo = {
       "question": user_input,
       "answer": response.answer
     };
-    axios.put('http://localhost:3500/api/addQA/' + id, putData)
+    axios.put('https://pdf-gpt-aycf.onrender.com/api/addQA/' + id, putData)
       .catch(error => {
         console.error('Error:', error);
       }); 
