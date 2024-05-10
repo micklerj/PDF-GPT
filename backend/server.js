@@ -14,7 +14,8 @@ const cookieParser = require('cookie-parser');
 connectDB();
 const corsOptions = {
   //origin: 'http://localhost:3000',
-  origin: 'https://pdf-gpt.netlify.app',
+  //origin: 'https://pdf-gpt.netlify.app',
+  origin: 'http://gpt4pdfs.com/',
   credentials: true,  
 };
 app.use(cors(corsOptions));
