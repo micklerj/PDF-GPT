@@ -4,7 +4,7 @@ import AuthContext from './context/AuthProvider';
 import './normal.css';
 import './Login.css';
 import axios from './api/axios';
-const LOGIN_URL = 'https://pdf-gpt-aycf.onrender.com/api/login';
+const LOGIN_URL = 'http://localhost:3500/api/login';
 
 const Login = () => {
     const { setAuth } = useContext(AuthContext);

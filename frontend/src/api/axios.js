@@ -1,5 +1,5 @@
 import axios from 'axios';
 
 export default axios.create({
-    baseURL: 'https://pdf-gpt-aycf.onrender.com'
+    baseURL: 'http://localhost:3500'
 });

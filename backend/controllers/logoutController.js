@@ -1,11 +1,12 @@
+const fs = require('fs-extra');
 const users = require('../model/userlogin');
 // const jwt = require('jsonwebtoken');
 // require('dotenv').config();
 
 const handleLogout = async (req, res) => {
-    // On client frontend, also delete access token
+    // TODO: On client frontend, also delete access token
 
-
+    // TODO: 
     const cookies = req.cookies;
     if (!cookies?.jwt) {
         return res.sendStatus(204);
@@ -24,6 +25,8 @@ const handleLogout = async (req, res) => {
     const result = await user.save();
     console.log(result);
 
+    // TODO: delete uploaded pdf files
+    
     res.clearCookie('jwt', { httpOnly: true, maxAge: 86400000 });
     res.sendStatus(204);
 }

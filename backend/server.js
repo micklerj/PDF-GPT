@@ -13,9 +13,9 @@ const cookieParser = require('cookie-parser');
 // Connect to MongoDB
 connectDB();
 const corsOptions = {
-  //origin: 'http://localhost:3000',
+  origin: 'http://localhost:3000',
   //origin: 'https://pdf-gpt.netlify.app',
-  origin: 'https://gpt4pdfs.com',
+  //origin: 'https://gpt4pdfs.com',
   credentials: true,  
 };
 app.use(cors(corsOptions));

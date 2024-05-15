@@ -52,7 +52,7 @@ const App = () => {
         "pdfPath": currentPdfPath   
       };
 
-      await axios.post("https://pdf-gpt-aycf.onrender.com/api/vectorize", postData, {
+      await axios.post("http://localhost:3500/api/vectorize", postData, {
         headers: {
           "Content-Type": "application/json"
         }
@@ -73,7 +73,7 @@ const App = () => {
         "pdfName": currentPdfName   
       };
 
-      const response = await axios.post("https://pdf-gpt-aycf.onrender.com/api/newChat", postData, {
+      const response = await axios.post("http://localhost:3500/api/newChat", postData, {
         headers: {
           "Content-Type": "application/json"
         }
@@ -104,7 +104,7 @@ const App = () => {
         const postData = { id: convID };
         console.log("Post Data:", postData); // Debugging line to check postData
 
-        const response = await axios.post("https://pdf-gpt-aycf.onrender.com/api/initOldChat", postData, {
+        const response = await axios.post("http://localhost:3500/api/initOldChat", postData, {
             headers: { "Content-Type": "application/json" }
         });
 
@@ -128,7 +128,7 @@ const App = () => {
             console.error("No token found in local storage.");
             return null;
         }
-        const response = await axios.get('https://pdf-gpt-aycf.onrender.com/api/getUserName', {
+        const response = await axios.get('http://localhost:3500/api/getUserName', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -158,7 +158,7 @@ const App = () => {
   
 
     try {
-      const response = await axios.post("https://pdf-gpt-aycf.onrender.com/api/upload", formData, {
+      const response = await axios.post("http://localhost:3500/api/upload", formData, {
           headers: {
               'Content-Type': 'multipart/form-data'
           }
@@ -193,7 +193,7 @@ const App = () => {
         "convID": currentConvID,
         "pdfName": currentPdfName
       };
-      axios.put('https://pdf-gpt-aycf.onrender.com/api/addConv/' + currentUserName, putData)
+      axios.put('http://localhost:3500/api/addConv/' + currentUserName, putData)
         .catch(error => {
           console.error('Error adding convID:', error);
         }); 
@@ -206,7 +206,7 @@ const App = () => {
         "input": input
       };
 
-      const response = await axios.post("https://pdf-gpt-aycf.onrender.com/api/userInput", postData, {
+      const response = await axios.post("http://localhost:3500/api/userInput", postData, {
         headers: {
           "Content-Type": "application/json"
         }
@@ -221,7 +221,7 @@ const App = () => {
   async function handleInitializeSideBar(username) {
     setChatHistoryLog([]);
 
-    axios.get('https://pdf-gpt-aycf.onrender.com/api/getUser/?username=' + username)
+    axios.get('http://localhost:3500/api/getUser/?username=' + username)
     .then(response => {
 
       // Access the user's previous conversations from the response data
@@ -250,10 +250,10 @@ const App = () => {
     </div>
   );
   // Handles logout tasks
-  const handleLogout = () => {
+  const handleLogout = async () => {
 
-    // TODO: Clear user authentication tokens or session data here
-
+    // TODO: Clear user authentication tokens or session data and delete uploaded pdf files (with /api/logout)
+   
     navigate('/login');
   };
 
