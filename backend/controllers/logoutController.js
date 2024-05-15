@@ -3,7 +3,7 @@ const users = require('../model/userlogin');
 // require('dotenv').config();
 
 const handleLogout = async (req, res) => {
-    // On client frontend, also delete access token
+    // TODO: On client frontend, also delete access token
 
 
     const cookies = req.cookies;
@@ -24,6 +24,8 @@ const handleLogout = async (req, res) => {
     const result = await user.save();
     console.log(result);
 
+    // TODO: delete uploaded pdf files
+    
     res.clearCookie('jwt', { httpOnly: true, maxAge: 86400000 });
     res.sendStatus(204);
 }

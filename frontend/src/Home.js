@@ -252,7 +252,7 @@ const App = () => {
   // Handles logout tasks
   const handleLogout = () => {
 
-    // TODO: Clear user authentication tokens or session data here
+    // TODO: Clear user authentication tokens or session data and delete uploaded pdf files (with /api/logout)
 
     navigate('/login');
   };
